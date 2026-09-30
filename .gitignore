@@ -12,3 +12,8 @@ frontend/dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Banco H2 local persistente´nbackend/data
+
+# Banco H2 local persistente
+backend/data
