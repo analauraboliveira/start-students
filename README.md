@@ -58,18 +58,70 @@ Autenticação, dois perfis, autorização no backend, listagem, paginação, or
 
 Essas credenciais são somente para execução local do protótipo.
 
-## Executar o backend
+## Passo a passo para executar e testar do zero
 
-Requer JDK 21 e Maven.
+Use esta sequência depois de clonar ou copiar o repositório para outro computador.
 
-```bash
-cd backend
-mvn spring-boot:run
+### 1. Conferir os pré-requisitos
+
+No PowerShell:
+
+```powershell
+java -version
+javac -version
+node -v
+npm -v
 ```
 
-API: `http://localhost:8080/api`
+O projeto usa Java 21 no build. Não é necessário instalar Maven globalmente: o repositório possui Maven Wrapper e ele baixa a distribuição necessária na primeira execução.
 
-Console H2: `http://localhost:8080/h2-console`
+### 2. Clonar ou atualizar o projeto
+
+Para uma cópia nova:
+
+```powershell
+git clone https://github.com/analauraboliveira/start-students.git
+cd start-students
+```
+
+Se o repositório já estiver no computador:
+
+```powershell
+git pull
+```
+
+### 3. Build e testes do backend
+
+A partir da raiz:
+
+```powershell
+cd backend
+.\mvnw.cmd clean test
+```
+
+Na primeira execução, aguarde o download do Maven. O resultado esperado ao final é `BUILD SUCCESS`.
+
+Para também gerar o pacote da aplicação:
+
+```powershell
+.\mvnw.cmd clean package
+```
+
+### 4. Iniciar o backend
+
+Ainda em `backend`:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Mantenha esse terminal aberto.
+
+- Backend: `http://localhost:8080`
+- API: `http://localhost:8080/api`
+- H2 Console: `http://localhost:8080/h2-console`
+
+No H2:
 
 ```text
 JDBC URL: jdbc:h2:mem:startstudents
@@ -77,17 +129,108 @@ User Name: sa
 Password: deixe vazio
 ```
 
-## Executar o frontend
+Para conferir os alunos carregados:
 
-Requer Node 20+ e npm.
+```sql
+SELECT * FROM ALUNOS;
+```
 
-```bash
+### 5. Instalar as dependências do frontend
+
+Abra outro terminal na raiz do projeto e deixe o backend funcionando:
+
+```powershell
 cd frontend
+npm install
+```
+
+`node_modules` não é salvo no Git, então o `npm install` precisa ser executado novamente em cada clone novo.
+
+Avisos de pacotes deprecated ou vulnerabilidades não significam necessariamente que a instalação falhou. Não use `npm audit fix --force` sem revisar as alterações, pois ele pode trocar versões e quebrar o projeto.
+
+### 6. Fazer o build do frontend
+
+```powershell
+npm run build
+```
+
+O comando deve terminar sem erros.
+
+### 7. Iniciar o frontend
+
+```powershell
+npm start
+```
+
+Se o Angular perguntar sobre compartilhamento de dados de uso, responder `N` não interfere na aplicação.
+
+Abra:
+
+```text
+http://localhost:4200
+```
+
+O fluxo esperado é login → autenticação → listagem de alunos.
+
+### 8. Teste manual
+
+Administrador:
+
+```text
+Usuário: adminuser
+Senha: admin123
+```
+
+Teste login, listagem, busca, filtro, paginação, detalhes, cadastro, edição, exclusão lógica e logout.
+
+Depois teste o perfil Leitor:
+
+```text
+Usuário: leitoruser
+Senha: leitor123
+```
+
+O Leitor pode listar, buscar e consultar detalhes, mas não pode cadastrar, editar ou excluir.
+
+### 9. Testes automatizados
+
+Backend:
+
+```powershell
+cd backend
+.\mvnw.cmd test
+```
+
+Frontend:
+
+```powershell
+cd frontend
+npm install
+npm test -- --watch=false
+```
+
+### 10. Erro "'ng' is not recognized"
+
+Esse erro normalmente significa que as dependências do frontend ainda não estão instaladas. Dentro de `frontend`:
+
+```powershell
 npm install
 npm start
 ```
 
-Abra `http://localhost:4200`.
+Não é necessário instalar o Angular CLI globalmente.
+
+### 11. Antes de fazer commit
+
+Na raiz:
+
+```powershell
+git status
+```
+
+O `.gitignore` evita o versionamento de `frontend/node_modules/`, `frontend/.angular/`, `frontend/dist/`, `backend/target/` e da distribuição do Maven baixada pelo wrapper. O `package-lock.json` pode ser versionado para manter as versões das dependências reproduzíveis.
+
+Para parar backend ou frontend, use `Ctrl + C` no terminal correspondente.
 
 ## Endpoints
 
