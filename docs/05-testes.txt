@@ -1,0 +1,27 @@
+TESTES
+
+BACKEND
+ValidadorCpfTest:
+teste unitário de regra de CPF.
+
+GerenciarAlunoServiceTest:
+usa Mockito para simular o repositório e comprovar que CPF duplicado não é salvo.
+
+AlunoControllerIntegrationTest:
+usa Spring Boot Test + MockMvc.
+Tem evidência de rota protegida, consulta por LEITOR e bloqueio 403 quando LEITOR tenta excluir.
+
+Rodar:
+cd backend
+mvn test
+
+FRONTEND
+ListaAlunosComponent.spec:
+confere o estado de nenhum resultado.
+
+Rodar:
+cd frontend
+npm install
+npm test -- --watch=false
+
+Na entrega final vale aumentar a cobertura, principalmente cadastro, edição, retorno 409, paginação e falha de rede.
