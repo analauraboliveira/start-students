@@ -13,3 +13,5 @@
 .acao.editar{background:#1677ff!important;color:#fff!important}
 .acao.excluir{background:#ed0016!important;color:#fff!important}
 .acao:hover{filter:brightness(.94)}
+
+.erro-campo{color:#b42318!important;font-size:9px!important;margin-top:3px!important}
