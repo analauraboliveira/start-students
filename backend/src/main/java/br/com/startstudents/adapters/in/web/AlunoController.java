@@ -8,6 +8,8 @@ import org.springframework.data.domain.*;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+// recebe as requisicoes da tela e chama os casos de uso
 @RestController @RequestMapping("/api/alunos") @RequiredArgsConstructor
 public class AlunoController {
  private final GerenciarAlunoUseCase useCase;
