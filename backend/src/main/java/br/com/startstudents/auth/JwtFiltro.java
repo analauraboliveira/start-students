@@ -1,5 +1,7 @@
 package br.com.startstudents.auth;
 import io.jsonwebtoken.Claims;import jakarta.servlet.*;import jakarta.servlet.http.*;import lombok.RequiredArgsConstructor;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;import org.springframework.security.core.authority.SimpleGrantedAuthority;import org.springframework.security.core.context.SecurityContextHolder;import org.springframework.stereotype.Component;import org.springframework.web.filter.OncePerRequestFilter;import java.io.IOException;import java.util.List;
+
+// confere o token antes de deixar a requisicao continuar
 @Component @RequiredArgsConstructor
 public class JwtFiltro extends OncePerRequestFilter {
  private final JwtService jwt;
