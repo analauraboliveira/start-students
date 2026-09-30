@@ -1,0 +1,26 @@
+ARQUITETURA HEXAGONAL - COMO ORGANIZEI
+
+A ideia principal foi não deixar regra de negócio grudada no controller nem no banco.
+
+domain:
+é o centro. Aqui ficam Aluno, StatusAluno e exceções.
+
+application/ports/in:
+diz o que a aplicação sabe fazer: listar, buscar, cadastrar, editar e inativar.
+
+application/ports/out:
+é o contrato do banco. O service usa esse contrato e não precisa saber que por baixo existe JPA/H2.
+
+application/service:
+aqui ficam as regras de CPF, matrícula, duplicidade, edição e exclusão lógica.
+
+adapters/in/web:
+controllers e DTOs. É a entrada HTTP.
+
+adapters/out/persistence:
+implementa a saída pro H2 usando JPA.
+
+auth/config:
+JWT, perfis e configurações de segurança.
+
+No front separei pages, core, services e models. Os nomes das classes estão em português e as pastas técnicas ficaram em inglês.
