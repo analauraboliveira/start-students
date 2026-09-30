@@ -14,6 +14,7 @@ public class AlunoRepositoryAdapter implements AlunoRepositoryPort {
  public Optional<Aluno> buscarPorId(Long id){return jpa.findById(id).map(this::dominio);}
  // antes de salvar, converte o modelo para entidade JPA
  public Aluno salvar(Aluno a){return dominio(jpa.saveAndFlush(entidade(a)));}
+ public void inativar(Long id){jpa.inativar(id);}
  public boolean existeCpf(String v,Long id){return jpa.existeCpf(v,id);}
  public boolean existeEmail(String v,Long id){return jpa.existeEmail(v,id);}
  public boolean existeMatricula(String v){return jpa.existsByMatricula(v);}
