@@ -53,8 +53,8 @@ Autenticação, dois perfis, autorização no backend, listagem, paginação, or
 
 | Perfil | Usuário | Senha |
 |---|---|---|
-| Administrador | admin123 | admin123 |
-| Leitor | leitor123 | leitor123 |
+| Administrador | adminuser | admin123 |
+| Leitor | leitoruser | leitor123 |
 
 Essas credenciais são somente para execução local do protótipo.
 
