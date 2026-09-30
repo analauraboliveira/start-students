@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';import {HttpClient,HttpParams} from '@angular/common/http';import {Aluno,Pagina,StatusAluno} from '../../models/aluno.model';
+
+// centraliza as chamadas do frontend para a API de alunos
 @Injectable({providedIn:'root'})
 export class AlunoService{
  private api='http://localhost:8080/api/alunos';constructor(private http:HttpClient){}
