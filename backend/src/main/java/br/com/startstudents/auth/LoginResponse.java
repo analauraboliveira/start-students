@@ -1,0 +1,1 @@
+package br.com.startstudents.auth; public record LoginResponse(String token,String usuario,PerfilUsuario perfil){}
