@@ -123,7 +123,7 @@ Mantenha esse terminal aberto.
 No H2:
 
 ```text
-JDBC URL: jdbc:h2:mem:startstudents
+JDBC URL: jdbc:h2:file:./data/startstudents
 User Name: sa
 Password: deixe vazio
 ```
@@ -250,7 +250,7 @@ Foram previstos os códigos obrigatórios: 200/204, 201, 400, 401, 403, 404, 409
 
 ```bash
 cd backend
-mvn test
+./mvnw test
 ```
 
 ```bash
@@ -265,8 +265,8 @@ A pasta `docs/` explica arquitetura, H2, regras, front, segurança, testes, crit
 
 ## Banco
 
-O Spring cria as tabelas via JPA e carrega uma massa inicial. Também existe `database/start-students.sql` para consulta/teste manual.
+O Spring mantém o H2 em arquivo e carrega a massa inicial somente quando o banco está vazio. Cadastros, edições e exclusões lógicas permanecem após reiniciar o backend. Também existe `database/start-students.sql` para consulta/teste manual.
 
 ## Sobre o nível da entrega
 
-O núcleo obrigatório do desafio foi priorizado e está funcional, mas o projeto continua propositalmente enxuto: não é apresentado como produto de produção completo. Persistência de usuários com senha em hash, configuração externa de segredos, banco persistente, Docker, CI/CD, cache, auditoria avançada, restauração e uma cobertura de testes mais ampla continuam fora desta etapa. Por isso, a referência de ~75% diz respeito ao produto completo imaginado, e não a apenas 75% das regras obrigatórias.
+O núcleo obrigatório do desafio foi priorizado e está funcional, mas o projeto continua propositalmente enxuto: não é apresentado como produto de produção completo. Persistência de usuários com senha em hash, configuração externa de segredos, banco de produção, Docker, CI/CD, cache, auditoria avançada, restauração e uma cobertura de testes mais ampla continuam fora desta etapa. Por isso, a referência de ~75% diz respeito ao produto completo imaginado, e não a apenas 75% das regras obrigatórias.
