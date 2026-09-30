@@ -1,19 +1,26 @@
-O QUE FALTA PRA 100%
+LIMITAÇÕES E PRÓXIMOS PASSOS
 
-Essa versão continua planejada em aproximadamente 75%. O núcleo obrigatório foi priorizado e os opcionais ficaram de fora.
+Esta entrega é propositalmente enxuta. O núcleo obrigatório do desafio foi priorizado, mas ela não pretende representar um produto pronto para produção. A referência de aproximadamente 75% considera também endurecimento de produção, opcionais e cobertura adicional.
 
-Principais próximos passos de acabamento:
-1. trocar a confirmação nativa de exclusão por modal próprio com foco preso e retorno de foco;
-2. melhorar máscaras visuais de CPF e telefone;
-3. mostrar todas as mensagens de validação exatamente ao lado de cada campo;
-4. aumentar a suíte de testes para cobrir mais combinações;
-5. revisão visual e de responsividade;
-6. guardar os usuários em persistência com senha em hash numa versão de produção.
+O que ainda pode evoluir:
+1. ampliar testes de frontend e combinações de integração;
+2. refinar responsividade e acessibilidade em mais tamanhos de tela;
+3. melhorar máscaras visuais de CPF e telefone;
+4. persistir usuários e armazenar senhas com hash;
+5. mover a chave JWT e outras configurações sensíveis para variáveis de ambiente;
+6. trocar o H2 em memória por banco persistente em um ambiente real;
+7. adicionar observabilidade, logs estruturados e auditoria;
+8. adicionar automação de build/deploy em uma etapa futura.
 
-Fora do escopo e não implementado nesta etapa:
+Fora do escopo e não implementado:
 - recuperação de senha;
 - turmas, notas e frequência;
 - envio real de e-mails/mensagens;
-- Docker, CI/CD, cache, auditoria avançada e restauração.
+- Docker, CI/CD e cache;
+- auditoria avançada e restauração de aluno excluído.
 
-A ideia é não colocar opcional só para parecer que o projeto está 100%.
+Já concluído nesta etapa:
+- modal próprio de exclusão;
+- revisão visual baseada no protótipo;
+- suíte backend ampliada, com 17 testes passando na última execução;
+- validações e permissões principais do escopo obrigatório.
