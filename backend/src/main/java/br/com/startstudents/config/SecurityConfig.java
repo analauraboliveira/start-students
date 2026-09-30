@@ -1,5 +1,7 @@
 package br.com.startstudents.config;
 import br.com.startstudents.auth.JwtFiltro;import jakarta.servlet.http.HttpServletResponse;import org.springframework.context.annotation.*;import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;import org.springframework.security.config.annotation.web.builders.HttpSecurity;import org.springframework.security.config.http.SessionCreationPolicy;import org.springframework.security.web.*;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;import org.springframework.web.cors.*;import java.io.IOException;import java.util.List;
+
+// configura as rotas publicas, JWT e permissoes
 @Configuration @EnableMethodSecurity
 public class SecurityConfig {
  @Bean SecurityFilterChain filter(HttpSecurity h,JwtFiltro jwt)throws Exception{
