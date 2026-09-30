@@ -39,9 +39,9 @@ public class GerenciarAlunoService implements GerenciarAlunoUseCase {
   return repository.salvar(a);
  }
  public void inativar(Long id){
-  Aluno a=buscar(id);
+  buscar(id);
   // nao apaga de verdade, so marca como excluido
-  a.setUsuarioExcluido(true);a.setStatus(StatusAluno.INATIVO);repository.salvar(a);
+  repository.inativar(id);
  }
  private void validarConflitos(Aluno a,Long id){
   if(repository.existeCpf(a.getCpf(),id))throw new ConflitoException("CPF já cadastrado.");
