@@ -1,55 +1,59 @@
-MAPA DA ESPECIFICAÇÃO
+MAPA DA ESPECIFICAÇÃO - ENTREGA PARCIAL
 
-Esta é uma entrega parcial, então a marcação é:
-OK = implementado
-PARCIAL = existe base, mas ainda falta refinamento
+Esta versão continua sendo uma entrega de aproximadamente 75%, mas o que foi deixado de fora é acabamento/opcional.
+As regras obrigatórias e os critérios de aceite foram priorizados.
 
 ESCOPO OBRIGATÓRIO
-OK autenticação, logout e rota protegida
-OK listagem, busca, filtro, ordenação e paginação
-OK cadastro e matrícula automática
+OK autenticação, logout e rotas protegidas
+OK listagem com busca por nome/matrícula, filtro, ordenação e paginação
+OK 10 registros por página, total e massa com mais de 25 alunos
+OK cadastro com matrícula gerada no backend
 OK detalhes somente leitura
-PARCIAL edição: funcional, mas detecção visual de alteração ainda precisa acabamento
+OK edição com detecção de alteração e restauração do valor original
+OK CPF e matrícula imutáveis na edição
+OK confirmação ao sair com alteração não salva
 OK exclusão lógica com confirmação
-OK loading, sucesso, erro e nenhum resultado
-OK persistência H2 e validação no servidor
-OK documentação
-OK testes mínimos
+OK retorno à página anterior ao excluir o último item
+OK loading, sucesso, validação, sem resultados, erro de comunicação, sessão expirada e sem permissão
+OK persistência e validações no servidor
+OK foto JPEG/PNG até 5 MB, preview e remoção
+OK documentação e testes mínimos
 
 PERFIS
-OK ADMINISTRADOR: listar, visualizar, criar, editar e inativar
-OK LEITOR: listar, buscar e visualizar
-OK API bloqueia ação sem permissão
+OK ADMINISTRADOR: listar, consultar, cadastrar, editar e inativar
+OK LEITOR: listar, buscar e consultar detalhes
+OK API valida as permissões
 
 HTTP
-OK 200/204
-OK 201
-OK 400
-OK 401
-OK 403
-OK 404
-OK 409
-OK 422
-OK 500 sem detalhe sensível
+OK 200/204 sucesso
+OK 201 cadastro
+OK 400 requisição malformada
+OK 401 não autenticado
+OK 403 sem permissão
+OK 404 não encontrado
+OK 409 CPF/e-mail/versão
+OK 422 validação semântica
+OK 500 sem detalhes sensíveis
 
-CRITÉRIOS
-CA-01 OK login válido
-CA-02 OK login inválido genérico
-CA-03 OK rota protegida
-CA-04 OK nome parcial e paginação
-CA-05 OK filtros do front voltam para página 1
+CRITÉRIOS DE ACEITE
+CA-01 OK credenciais válidas criam sessão e abrem lista
+CA-02 OK credenciais inválidas usam mensagem genérica
+CA-03 OK rota protegida sem sessão
+CA-04 OK busca parcial por nome sem diferenciar maiúsculas
+CA-05 OK alteração de filtro volta para página 1
 CA-06 OK CPF duplicado gera conflito
-CA-07 OK cadastro gera matrícula
-CA-08 PARCIAL botão de edição ainda não compara snapshot original
-CA-09 PARCIAL depende da mesma detecção de mudança
-CA-10 OK LEITOR recebe 403 e não altera banco
-CA-11 PARCIAL recarrega página; ajuste automático da última página fica pra etapa final
-CA-12 OK formulário preserva os dados quando a chamada falha
+CA-07 OK cadastro gera matrícula e feedback
+CA-08 OK edição sem mudança mantém salvar desabilitado
+CA-09 OK restaurar valor original desabilita salvar novamente
+CA-10 OK LEITOR recebe 403 ao tentar alteração pela API
+CA-11 OK último item removido volta para página anterior válida
+CA-12 OK falha no cadastro preserva dados para tentar de novo
 
 TESTES MÍNIMOS
-OK unitário de regra
-OK integração de endpoint
-OK teste automatizado de fluxo/estado no front
-OK evidência de permissão LEITOR/ADMINISTRADOR
+OK teste unitário de regra de negócio
+OK teste de integração de endpoint
+OK teste automatizado no frontend
+OK evidência das permissões de LEITOR e ADMINISTRADOR
 
-Observação: a numeração das regras no PDF tem saltos. Aqui eu priorizei o conteúdo obrigatório em vez de inventar regras para números que não aparecem.
+OBSERVAÇÃO
+A confirmação de exclusão ainda usa a confirmação nativa do navegador. Ela cumpre a confirmação funcional, mas um modal próprio com gerenciamento completo de foco fica como acabamento para a etapa final.
