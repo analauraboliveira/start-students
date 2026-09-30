@@ -4,6 +4,7 @@ import org.springframework.dao.*;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
@@ -20,6 +21,8 @@ public class TratadorGlobalException {
   e.getBindingResult().getFieldErrors().forEach(x->campos.putIfAbsent(x.getField(),x.getDefaultMessage()));
   return ResponseEntity.unprocessableEntity().body(Map.of("mensagem","Confira os campos informados.","campos",campos));
  }
+ // se o perfil nao pode fazer a acao, devolve 403 e nao 500
+ @ExceptionHandler(AuthorizationDeniedException.class) ResponseEntity<?> semPermissao(AuthorizationDeniedException e){return resposta(403,"Você não tem permissão para esta ação.");}
  @ExceptionHandler(IllegalArgumentException.class) ResponseEntity<?> semantico(IllegalArgumentException e){return resposta(422,e.getMessage());}
  @ExceptionHandler(Exception.class) ResponseEntity<?> interno(Exception e){return resposta(500,"Não foi possível concluir a operação.");}
  private ResponseEntity<?> resposta(int status,String mensagem){return ResponseEntity.status(status).body(Map.of("mensagem",mensagem));}
