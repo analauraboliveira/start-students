@@ -1,7 +1,6 @@
-MAPA DA ESPECIFICAÇÃO - ENTREGA PARCIAL
+MAPA DA ESPECIFICAÇÃO - ENTREGA ATUAL
 
-Esta versão continua sendo uma entrega de aproximadamente 75%, mas o que foi deixado de fora é acabamento/opcional.
-As regras obrigatórias e os critérios de aceite foram priorizados.
+O núcleo obrigatório do desafio foi priorizado. A referência de aproximadamente 75% considera um produto completo, incluindo endurecimento para produção, opcionais e cobertura mais ampla; não significa que 25% das regras obrigatórias foram deliberadamente deixadas quebradas.
 
 ESCOPO OBRIGATÓRIO
 OK autenticação, logout e rotas protegidas
@@ -12,12 +11,12 @@ OK detalhes somente leitura
 OK edição com detecção de alteração e restauração do valor original
 OK CPF e matrícula imutáveis na edição
 OK confirmação ao sair com alteração não salva
-OK exclusão lógica com confirmação
+OK exclusão lógica com modal de confirmação
 OK retorno à página anterior ao excluir o último item
 OK loading, sucesso, validação, sem resultados, erro de comunicação, sessão expirada e sem permissão
 OK persistência e validações no servidor
 OK foto JPEG/PNG até 5 MB, preview e remoção
-OK documentação e testes mínimos
+OK documentação e testes automatizados
 
 PERFIS
 OK ADMINISTRADOR: listar, consultar, cadastrar, editar e inativar
@@ -49,11 +48,12 @@ CA-10 OK LEITOR recebe 403 ao tentar alteração pela API
 CA-11 OK último item removido volta para página anterior válida
 CA-12 OK falha no cadastro preserva dados para tentar de novo
 
-TESTES MÍNIMOS
-OK teste unitário de regra de negócio
-OK teste de integração de endpoint
+TESTES
+OK testes unitários de regras de negócio
+OK testes de integração de endpoints
 OK teste automatizado no frontend
 OK evidência das permissões de LEITOR e ADMINISTRADOR
+OK suíte backend ampliada para 17 testes na última validação
 
 OBSERVAÇÃO
-A confirmação de exclusão ainda usa a confirmação nativa do navegador. Ela cumpre a confirmação funcional, mas um modal próprio com gerenciamento completo de foco fica como acabamento para a etapa final.
+A exclusão usa modal próprio com confirmação e retorno de foco. A interface foi aproximada do protótipo, mantendo as regras no backend mesmo quando textos auxiliares não aparecem visualmente.
