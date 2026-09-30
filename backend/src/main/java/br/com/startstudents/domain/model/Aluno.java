@@ -1,6 +1,7 @@
 package br.com.startstudents.domain.model;
 import lombok.*;
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+// modelo principal usado pelas regras de negocio
+@Getter @Setter @Builder @NoArgsConstructor @AllArgsConstructor
 public class Aluno {
  private Long id;
  private String nomeCompleto;
@@ -11,4 +12,6 @@ public class Aluno {
  private String matricula;
  private StatusAluno status;
  private boolean usuarioExcluido;
+ // ajuda a detectar edicao concorrente
+ private Long version;
 }
