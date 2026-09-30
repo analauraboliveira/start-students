@@ -11,4 +11,7 @@ public interface AlunoJpaRepository extends JpaRepository<AlunoEntity,Long>{
  @Query("select count(a)>0 from AlunoEntity a where lower(a.email)=lower(:valor) and (:id is null or a.id<>:id)")
  boolean existeEmail(@Param("valor")String valor,@Param("id")Long id);
  boolean existsByMatricula(String matricula);
+ @Modifying
+ @Query("update AlunoEntity a set a.usuarioExcluido=true, a.status=br.com.startstudents.domain.model.StatusAluno.INATIVO where a.id=:id and a.usuarioExcluido=false")
+ int inativar(@Param("id") Long id);
 }
