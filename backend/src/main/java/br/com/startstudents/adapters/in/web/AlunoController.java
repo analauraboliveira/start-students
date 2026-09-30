@@ -23,5 +23,5 @@ public class AlunoController {
  public AlunoResponse editar(@PathVariable Long id,@Valid @RequestBody AlunoRequest r){return AlunoResponse.de(useCase.editar(id,mapear(r)));}
  @DeleteMapping("/{id}") @PreAuthorize("hasRole('ADMINISTRADOR')")
  public ResponseEntity<Void> excluir(@PathVariable Long id){useCase.inativar(id);return ResponseEntity.noContent().build();}
- private Aluno mapear(AlunoRequest r){return Aluno.builder().nomeCompleto(r.nomeCompleto()).email(r.email()).cpf(r.cpf()).telefone(r.telefone()).foto(r.foto()).status(r.status()).build();}
+ private Aluno mapear(AlunoRequest r){return Aluno.builder().nomeCompleto(r.nomeCompleto()).email(r.email()).cpf(r.cpf()).telefone(r.telefone()).foto(r.foto()).status(r.status()).version(r.version()).build();}
 }
