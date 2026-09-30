@@ -5,23 +5,30 @@ ValidadorCpfTest:
 teste unitário de regra de CPF.
 
 GerenciarAlunoServiceTest:
-usa Mockito para simular o repositório e comprovar que CPF duplicado não é salvo.
+usa Mockito para simular o repositório e validar regras do cadastro e edição.
 
 AlunoControllerIntegrationTest:
 usa Spring Boot Test + MockMvc.
-Tem evidência de rota protegida, consulta por LEITOR e bloqueio 403 quando LEITOR tenta excluir.
+Tem evidência de rota protegida, consulta por LEITOR, bloqueio 403 em operações administrativas, validações e respostas HTTP.
 
-Rodar:
+Na última validação, a suíte backend passou com 17 testes.
+
+Rodar no Windows:
 cd backend
-mvn test
+.\\mvnw.cmd test
 
 FRONTEND
 ListaAlunosComponent.spec:
-confere o estado de nenhum resultado.
+a suíte possui 10 testes e cobre carregamento da lista, busca por nome, busca por matrícula, limpeza de filtros e retorno à primeira página, cancelamento da exclusão, exclusão com confirmação e feedback, retorno à página anterior ao excluir o último item, restauração do estado da listagem, ações de Administrador e identificação do aluno no modal.
+
+Na última validação, os 10 testes passaram.
 
 Rodar:
 cd frontend
 npm install
 npm test -- --watch=false
 
-Na entrega final vale aumentar a cobertura, principalmente cadastro, edição, retorno 409, paginação e falha de rede.
+Também validar o build:
+npm run build
+
+A cobertura pode ser ampliada no futuro com testes de componentes de cadastro e edição, falha de rede e testes ponta a ponta.
