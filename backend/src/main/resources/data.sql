@@ -1,4 +1,4 @@
-INSERT INTO alunos(nome_completo,email,cpf,telefone,foto,matricula,status,usuario_excluido,version) VALUES
+INSERT INTO alunos(nome_completo,email,cpf,telefone,foto,matricula,status,usuario_excluido,version) SELECT * FROM (VALUES
 ('Ana Souza','ana.souza@email.com','52998224725','81999990001',NULL,'20260001','ATIVO',FALSE,0),
 ('Bruno Lima','bruno.lima@email.com','16899535009','81999990002',NULL,'20260002','ATIVO',FALSE,0),
 ('Carla Melo','carla.melo@email.com','11144477735','81999990003',NULL,'20260003','ATIVO',FALSE,0),
@@ -25,4 +25,5 @@ INSERT INTO alunos(nome_completo,email,cpf,telefone,foto,matricula,status,usuari
 ('Amanda Torres','amanda.torres@email.com','85164823007','81999990024',NULL,'20260024','ATIVO',FALSE,0),
 ('Caio Vieira','caio.vieira@email.com','64174665004','81999990025',NULL,'20260025','ATIVO',FALSE,0),
 ('Debora Lopes','debora.lopes@email.com','56805282005','81999990026',NULL,'20260026','ATIVO',FALSE,0),
-('Erick Monteiro','erick.monteiro@email.com','22512645007','81999990027',NULL,'20260027','ATIVO',FALSE,0);
+('Erick Monteiro','erick.monteiro@email.com','22512645007','81999990027',NULL,'20260027','ATIVO',FALSE,0)) AS seed(nome_completo,email,cpf,telefone,foto,matricula,status,usuario_excluido,version)
+WHERE NOT EXISTS (SELECT 1 FROM alunos);
