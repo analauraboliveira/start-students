@@ -1,0 +1,24 @@
+H2 - COMO CONECTAR E USAR
+
+1. Entre em backend.
+2. Rode: mvn spring-boot:run
+3. Abra: http://localhost:8080/h2-console
+
+Use:
+JDBC URL: jdbc:h2:mem:startstudents
+User Name: sa
+Password: deixa vazio
+
+Clique em Connect.
+
+O banco é em memória. Se fechar o backend, ele é recriado na próxima execução.
+O data.sql carrega mais de 25 alunos pra paginação poder ser testada.
+
+Exemplos:
+SELECT * FROM ALUNOS;
+SELECT * FROM ALUNOS WHERE STATUS = 'ATIVO';
+SELECT * FROM ALUNOS WHERE USUARIO_EXCLUIDO = FALSE;
+
+Também existe database/start-students.sql com a estrutura da tabela.
+
+usuario_excluido é usado na exclusão lógica. Então excluir no sistema não apaga a linha de verdade.
