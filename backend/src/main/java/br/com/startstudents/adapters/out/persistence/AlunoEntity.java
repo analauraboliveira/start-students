@@ -2,7 +2,6 @@ package br.com.startstudents.adapters.out.persistence;
 import br.com.startstudents.domain.model.StatusAluno;
 import jakarta.persistence.*;
 import lombok.*;
-
 // essa classe representa a tabela alunos no banco
 @Entity @Table(name="alunos") @Getter @Setter @NoArgsConstructor
 public class AlunoEntity {
@@ -17,4 +16,6 @@ public class AlunoEntity {
  @Enumerated(EnumType.STRING) @Column(nullable=false) private StatusAluno status;
  // usado para exclusao logica
  @Column(nullable=false) private boolean usuarioExcluido;
+ // versao aumenta a cada alteracao
+ @Version private Long version;
 }
