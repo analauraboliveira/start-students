@@ -1,3 +1,21 @@
 import {Component,OnInit} from '@angular/core';import {CommonModule} from '@angular/common';import {FormsModule} from '@angular/forms';import {ActivatedRoute,Router,RouterLink} from '@angular/router';import {AlunoService} from '../../core/services/aluno.service';import {AuthService} from '../../core/auth/auth.service';import {Aluno} from '../../models/aluno.model';
+// o mesmo formulario serve para cadastro e edicao
 @Component({selector:'app-formulario-aluno',standalone:true,imports:[CommonModule,FormsModule,RouterLink],template:`<main><a routerLink="/alunos">← Voltar</a><section class="card formulario"><h1>{{id?'Editar aluno':'Novo aluno'}}</h1><div class="estado erro" *ngIf="semPermissao">Você não tem permissão para acessar esta ação.</div><form *ngIf="!semPermissao" (ngSubmit)="salvar()"><label>Nome completo<input name="nome" [(ngModel)]="aluno.nomeCompleto" required minlength="3"></label><label>E-mail<input name="email" [(ngModel)]="aluno.email" type="email" required></label><label>CPF<input name="cpf" [(ngModel)]="aluno.cpf" [disabled]="!!id" required></label><label>Telefone<input name="telefone" [(ngModel)]="aluno.telefone" required></label><label>Foto (URL ou Base64)<textarea name="foto" [(ngModel)]="aluno.foto"></textarea></label><label *ngIf="id">Status<select name="status" [(ngModel)]="aluno.status"><option value="ATIVO">Ativo</option><option value="INATIVO">Inativo</option></select></label><p class="erro" *ngIf="erro">{{erro}}</p><button [disabled]="salvando">{{salvando?'Salvando...':'Salvar'}}</button></form></section></main>`})
-export class FormularioAlunoComponent implements OnInit{id?:number;aluno:Partial<Aluno>={status:'ATIVO'};erro='';salvando=false;semPermissao=false;constructor(private service:AlunoService,private auth:AuthService,private route:ActivatedRoute,private router:Router){}ngOnInit(){if(!this.auth.administrador()){this.semPermissao=true;return}const x=this.route.snapshot.paramMap.get('id');if(x){this.id=+x;this.service.buscar(this.id).subscribe({next:a=>this.aluno=a,error:()=>this.erro='Não foi possível carregar o aluno.'})}}salvar(){this.salvando=true;this.erro='';const req=this.id?this.service.editar(this.id,this.aluno):this.service.cadastrar(this.aluno);req.subscribe({next:()=>this.router.navigate(['/alunos']),error:e=>{this.erro=e.error?.mensagem||'Confira os dados e tente novamente.';this.salvando=false}})}}
+export class FormularioAlunoComponent implements OnInit{
+ id?:number;aluno:Partial<Aluno>={status:'ATIVO'};erro='';salvando=false;semPermissao=false;
+ constructor(private service:AlunoService,private auth:AuthService,private route:ActivatedRoute,private router:Router){}
+ ngOnInit(){
+  // leitor pode consultar, mas nao pode abrir cadastro ou edicao
+  if(!this.auth.administrador()){this.semPermissao=true;return}
+  const x=this.route.snapshot.paramMap.get('id');
+  // quando tem id, busca os dados reais antes de editar
+  if(x){this.id=+x;this.service.buscar(this.id).subscribe({next:a=>this.aluno=a,error:()=>this.erro='Não foi possível carregar o aluno.'})}
+ }
+ salvar(){
+  this.salvando=true;this.erro='';
+  // decide se vai fazer POST ou PUT
+  const req=this.id?this.service.editar(this.id,this.aluno):this.service.cadastrar(this.aluno);
+  // se der erro, nao limpa o formulario
+  req.subscribe({next:()=>this.router.navigate(['/alunos']),error:e=>{this.erro=e.error?.mensagem||'Confira os dados e tente novamente.';this.salvando=false}})
+ }
+}
