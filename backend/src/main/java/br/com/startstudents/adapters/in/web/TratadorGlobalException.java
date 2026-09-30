@@ -5,6 +5,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
+
+// transforma os erros em respostas HTTP mais faceis de tratar no front
 // transforma erros da aplicacao em respostas HTTP mais claras
 @RestControllerAdvice
 public class TratadorGlobalException {
