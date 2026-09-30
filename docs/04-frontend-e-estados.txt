@@ -1,0 +1,25 @@
+FRONTEND E ESTADOS
+
+Login:
+loading durante a entrada e mensagem de erro.
+
+Lista:
+loading, sucesso, nenhum resultado e erro de comunicação com botão de tentar novamente.
+
+Sessão expirada:
+o interceptor recebe 401, limpa a sessão e manda pro login.
+
+Sem permissão:
+ações administrativas somem pro LEITOR. Se a API devolver 403, a tela mostra a falta de permissão.
+
+Cadastro/edição:
+botão mostra Salvando... enquanto espera.
+Se der erro, os dados digitados continuam no formulário para tentar novamente.
+
+Detalhes:
+somente leitura.
+
+Exclusão:
+pede confirmação antes de chamar a API.
+
+A interface já tem responsividade básica. Refinamento visual e acessibilidade mais profunda ficam para a etapa final.
