@@ -6,3 +6,10 @@
 .upload{position:relative;margin-top:8px!important}.upload span{display:inline-block;color:#555;text-decoration:underline;cursor:pointer}.upload input{position:absolute!important;width:1px!important;height:1px!important;opacity:0;overflow:hidden;padding:0!important}
 .form-page,.detalhe-page{width:500px}.detalhe-card .preview,.detalhe-card .sem-foto{width:105px;height:105px}
 .form-card,.detalhe-card{padding:18px 20px 20px}.modal{width:430px;border-radius:6px}.modal h2{font-size:18px;font-weight:600}
+
+/* acoes da tabela como no prototipo */
+.acao{width:28px!important;height:24px!important;border-radius:4px!important;padding:4px!important;display:grid!important;place-items:center!important}
+.acao.ver{background:#6b7280!important;color:#fff!important}
+.acao.editar{background:#1677ff!important;color:#fff!important}
+.acao.excluir{background:#ed0016!important;color:#fff!important}
+.acao:hover{filter:brightness(.94)}
