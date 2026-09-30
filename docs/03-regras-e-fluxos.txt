@@ -1,0 +1,35 @@
+REGRAS E FLUXOS
+
+LOGIN
+Usuário e senha passam por validação. Credencial errada devolve mensagem genérica.
+O token JWT guarda o perfil e expira.
+
+PERFIS
+ADMINISTRADOR consulta e altera.
+LEITOR só consulta.
+A API também valida isso, então esconder botão no front não é a única proteção.
+
+CADASTRO
+Nome: 3 a 120.
+E-mail: formato válido e sem duplicidade.
+CPF: salvo só com números, validado e único.
+Telefone: 10 ou 11 dígitos, salvo sem máscara.
+Foto: opcional.
+Matrícula: gerada no backend e única.
+Status inicial: ATIVO.
+
+EDIÇÃO
+CPF e matrícula não são alterados.
+As validações de conflito continuam valendo.
+
+EXCLUSÃO
+É lógica. usuarioExcluido=true e status=INATIVO.
+O registro continua no H2, mas não aparece na listagem normal.
+
+BUSCA
+Nome é parcial e ignora maiúscula/minúscula.
+Matrícula usa prefixo.
+Status pode ser combinado com os outros filtros.
+
+PAGINAÇÃO
+10 registros por página por padrão, ordenados por nome.
