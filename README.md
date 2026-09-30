@@ -6,9 +6,9 @@ Sistema de Gestão de Alunos desenvolvido para o desafio técnico **START STUDEN
 
 ## Status
 
-Entrega parcial planejada (~75% do escopo obrigatório). A ideia aqui não é fingir que está 100%: a base principal está funcional e organizada, e o que ainda falta está listado em `docs/07-limitacoes-e-proximos-passos.txt`.
+Entrega enxuta, pensada como aproximadamente 75% de um produto completo. O núcleo obrigatório do desafio foi priorizado e está funcional; itens de produção, opcionais e alguns refinamentos continuam listados em `docs/07-limitacoes-e-proximos-passos.txt`.
 
-Não foram implementados itens fora do escopo obrigatório.
+Não foram adicionadas funcionalidades fora do escopo apenas para aumentar artificialmente a entrega.
 
 ## Stack
 
@@ -39,7 +39,6 @@ frontend/src/app/
   core/                    auth, guards, interceptor e services
   models/                  modelos do front
   pages/                   telas
-  shared/                  coisas reaproveitáveis
 
 database/                  script SQL
 docs/                      explicações do projeto em linguagem simples
@@ -228,9 +227,7 @@ Na raiz:
 git status
 ```
 
-O `.gitignore` evita o versionamento de `frontend/node_modules/`, `frontend/.angular/`, `frontend/dist/`, `backend/target/` e da distribuição do Maven baixada pelo wrapper. O `package-lock.json` pode ser versionado para manter as versões das dependências reproduzíveis.
-
-Para parar backend ou frontend, use `Ctrl + C` no terminal correspondente.
+O `.gitignore` evita o versionamento de `frontend/node_modules/`, `frontend/.angular/`, `frontend/dist/`, `backend/target/` e da distribuição do Maven baixada pelo wrapper. Para parar backend ou frontend, use `Ctrl + C` no terminal correspondente.
 
 ## Endpoints
 
@@ -270,6 +267,6 @@ A pasta `docs/` explica arquitetura, H2, regras, front, segurança, testes, crit
 
 O Spring cria as tabelas via JPA e carrega uma massa inicial. Também existe `database/start-students.sql` para consulta/teste manual.
 
-## Importante sobre os 75%
+## Sobre o nível da entrega
 
-A entrega prioriza o núcleo avaliável do desafio. Alguns refinamentos de UX e acabamento visual continuam como próximos passos. Os opcionais (Docker, CI/CD, cache, auditoria avançada e restauração) não fazem parte desta etapa.
+O núcleo obrigatório do desafio foi priorizado e está funcional, mas o projeto continua propositalmente enxuto: não é apresentado como produto de produção completo. Persistência de usuários com senha em hash, configuração externa de segredos, banco persistente, Docker, CI/CD, cache, auditoria avançada, restauração e uma cobertura de testes mais ampla continuam fora desta etapa. Por isso, a referência de ~75% diz respeito ao produto completo imaginado, e não a apenas 75% das regras obrigatórias.
