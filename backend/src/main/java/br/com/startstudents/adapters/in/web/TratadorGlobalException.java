@@ -4,6 +4,8 @@ import org.springframework.http.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+
+// transforma erros da aplicacao em respostas HTTP mais claras
 @RestControllerAdvice
 public class TratadorGlobalException {
  @ExceptionHandler(AlunoNaoEncontradoException.class) ResponseEntity<?> naoEncontrado(AlunoNaoEncontradoException e){return resposta(404,e.getMessage());}
