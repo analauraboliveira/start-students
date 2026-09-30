@@ -5,15 +5,18 @@ O núcleo obrigatório do desafio foi priorizado. A referência de aproximadamen
 ESCOPO OBRIGATÓRIO
 OK autenticação, logout e rotas protegidas
 OK listagem com busca por nome/matrícula, filtro, ordenação e paginação
+OK busca principal identifica nome ou matrícula e remove espaços nas extremidades
 OK 10 registros por página, total e massa com mais de 25 alunos
 OK cadastro com matrícula gerada no backend
 OK detalhes somente leitura
 OK edição com detecção de alteração e restauração do valor original
-OK CPF e matrícula imutáveis na edição
+OK CPF e matrícula imutáveis na edição, com explicação visual
 OK confirmação ao sair com alteração não salva
 OK exclusão lógica com modal de confirmação
+OK modal de exclusão com foco inicial, foco preso, Escape e retorno ao acionador
 OK retorno à página anterior ao excluir o último item
 OK loading, sucesso, validação, sem resultados, erro de comunicação, sessão expirada e sem permissão
+OK erros de validação associados aos campos no formulário
 OK persistência e validações no servidor
 OK foto JPEG/PNG até 5 MB, preview e remoção
 OK documentação e testes automatizados
@@ -52,8 +55,9 @@ TESTES
 OK testes unitários de regras de negócio
 OK testes de integração de endpoints
 OK teste automatizado no frontend
+OK fluxo crítico automatizado de exclusão com confirmação e feedback
 OK evidência das permissões de LEITOR e ADMINISTRADOR
-OK suíte backend ampliada para 17 testes na última validação
+OK suíte backend com 17 testes na última validação
 
 OBSERVAÇÃO
-A exclusão usa modal próprio com confirmação e retorno de foco. A interface foi aproximada do protótipo, mantendo as regras no backend mesmo quando textos auxiliares não aparecem visualmente.
+A exclusão usa modal próprio com confirmação, foco preso, Escape e retorno de foco. O formulário associa as mensagens de validação aos respectivos campos. A interface foi aproximada do protótipo mantendo as regras de segurança no backend.
