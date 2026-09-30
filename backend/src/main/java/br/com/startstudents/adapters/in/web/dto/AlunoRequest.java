@@ -7,5 +7,6 @@ public record AlunoRequest(
  @NotBlank String cpf,
  @NotBlank @Pattern(regexp="\\D*(?:\\d\\D*){10,11}") String telefone,
  String foto,
- StatusAluno status
+ StatusAluno status,
+ Long version
 ){}
