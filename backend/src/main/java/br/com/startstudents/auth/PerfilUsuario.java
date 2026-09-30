@@ -1,0 +1,1 @@
+package br.com.startstudents.auth; public enum PerfilUsuario { ADMINISTRADOR, LEITOR }
