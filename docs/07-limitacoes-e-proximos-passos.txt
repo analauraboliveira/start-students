@@ -23,5 +23,5 @@ Já concluído nesta etapa:
 - H2 persistido em arquivo, mantendo alterações entre reinicializações;
 - modal próprio de exclusão;
 - revisão visual baseada no protótipo;
-- suíte backend ampliada, com 17 testes passando na última execução;
+- suíte backend ampliada, com 18 testes passando na última execução;
 - validações e permissões principais do escopo obrigatório.

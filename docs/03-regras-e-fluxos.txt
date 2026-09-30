@@ -33,3 +33,5 @@ Status pode ser combinado com os outros filtros.
 
 PAGINAÇÃO
 10 registros por página por padrão, ordenados por nome.
+O frontend valida os dígitos verificadores do CPF antes de permitir o cadastro, aceitando entrada com ou sem máscara. O backend mantém a validação final.
+As rotas de cadastro e edição usam CanDeactivate: sair com alterações não salvas exige confirmação, inclusive pela navegação do Angular. Formulário sem alterações ou já salvo não pede confirmação.

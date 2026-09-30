@@ -57,7 +57,7 @@ OK testes de integração de endpoints
 OK teste automatizado no frontend
 OK fluxo crítico automatizado de exclusão com confirmação e feedback
 OK evidência das permissões de LEITOR e ADMINISTRADOR
-OK suíte backend com 17 testes na última validação
+OK suíte backend com 18 testes na última validação
 
 OBSERVAÇÃO
 A exclusão usa modal próprio com confirmação, foco preso, Escape e retorno de foco. O formulário associa as mensagens de validação aos respectivos campos. A interface foi aproximada do protótipo mantendo as regras de segurança no backend.
