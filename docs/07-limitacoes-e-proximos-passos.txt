@@ -1,17 +1,19 @@
 O QUE FALTA PRA 100%
 
-Essa versão foi planejada em aproximadamente 75%, então não tentei colocar opcional só pra parecer completa.
+Essa versão continua planejada em aproximadamente 75%. O núcleo obrigatório foi priorizado e os opcionais ficaram de fora.
 
-Principais próximos passos:
-1. upload real de JPEG/PNG com limite de 5 MB e preview;
-2. detectar alteração no formulário e desabilitar Salvar quando nada mudou;
-3. se excluir o último item da página, voltar automaticamente pra página anterior;
-4. melhorar foco e Escape no modal de confirmação (hoje usa confirmação nativa);
-5. máscaras visuais de CPF e telefone;
-6. mensagens de validação por campo mais completas;
-7. mais testes de cadastro, edição, conflito e falha de rede;
-8. revisão final de acessibilidade e visual.
+Principais próximos passos de acabamento:
+1. trocar a confirmação nativa de exclusão por modal próprio com foco preso e retorno de foco;
+2. melhorar máscaras visuais de CPF e telefone;
+3. mostrar todas as mensagens de validação exatamente ao lado de cada campo;
+4. aumentar a suíte de testes para cobrir mais combinações;
+5. revisão visual e de responsividade;
+6. guardar os usuários em persistência com senha em hash numa versão de produção.
 
-As credenciais do protótipo são locais e fixas. Numa versão de produção eu colocaria usuários no banco e senha com hash.
+Fora do escopo e não implementado nesta etapa:
+- recuperação de senha;
+- turmas, notas e frequência;
+- envio real de e-mails/mensagens;
+- Docker, CI/CD, cache, auditoria avançada e restauração.
 
-Não implementei recuperação de senha, turmas, notas, frequência, e-mail real nem mensageria porque estão fora do escopo obrigatório.
+A ideia é não colocar opcional só para parecer que o projeto está 100%.
