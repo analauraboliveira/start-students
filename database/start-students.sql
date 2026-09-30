@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS alunos (
  foto CLOB,
  matricula VARCHAR(20) NOT NULL UNIQUE,
  status VARCHAR(20) NOT NULL,
- usuario_excluido BOOLEAN NOT NULL DEFAULT FALSE
+ usuario_excluido BOOLEAN NOT NULL DEFAULT FALSE,
+ version BIGINT DEFAULT 0
 );
 CREATE UNIQUE INDEX IF NOT EXISTS uk_alunos_email ON alunos(email);
