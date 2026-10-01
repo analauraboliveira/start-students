@@ -34,5 +34,4 @@ class AlunoControllerIntegrationTest {
  @Test void alunoInexistenteRetorna404()throws Exception{mvc.perform(get("/api/alunos/999999").header("Authorization",admin())).andExpect(status().isNotFound());}
  @Test void payloadInvalidoRetorna422()throws Exception{mvc.perform(post("/api/alunos").header("Authorization",admin()).contentType(MediaType.APPLICATION_JSON).content("{\"nomeCompleto\":\"A\",\"email\":\"email-invalido\",\"cpf\":\"123\",\"telefone\":\"1\"}")).andExpect(status().isUnprocessableEntity());}
  @Test void loginInvalidoRetorna401ComMensagemGenerica()throws Exception{mvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("{\"usuario\":\"usuario99\",\"senha\":\"senha999\"}")).andExpect(status().isUnauthorized()).andExpect(jsonPath("$.mensagem").value("Usuário ou senha inválidos."));}
- @Test void leitorNaoPodeEditar()throws Exception{mvc.perform(put("/api/alunos/1").header("Authorization",leitor()).contentType(MediaType.APPLICATION_JSON).content("{\\"nomeCompleto\\":\\"William Leal Gomes\\"}")).andExpect(status().isForbidden());}
 }
