@@ -1,27 +1,91 @@
 package br.com.startstudents.adapters.out.persistence;
 
 import br.com.startstudents.application.ports.out.AlunoRepositoryPort;
-import br.com.startstudents.domain.model.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Component;
+import br.com.startstudents.domain.model.Aluno;
+import br.com.startstudents.domain.model.StatusAluno;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 
-// faz a ponte entre a regra de negocio e o JPA
-@Component @RequiredArgsConstructor
+/**
+ * Faz a ponte entre as regras de negócio e o banco de dados.
+ * O serviço trabalha com Aluno; o JPA trabalha com AlunoEntity.
+ */
+@Component
+@RequiredArgsConstructor
 public class AlunoRepositoryAdapter implements AlunoRepositoryPort {
- private final AlunoJpaRepository jpa;
 
- // converte as entidades do banco para o modelo do dominio
- public Page<Aluno> listar(String n,String m,StatusAluno s,Pageable p){return jpa.filtrar(n,m,s,p).map(this::dominio);}
- public Optional<Aluno> buscarPorId(Long id){return jpa.findById(id).map(this::dominio);}
+    private final AlunoJpaRepository repositorioJpa;
 
- // antes de salvar, converte o modelo para entidade JPA
- public Aluno salvar(Aluno a){return dominio(jpa.saveAndFlush(entidade(a)));}
- public void inativar(Long id){jpa.inativar(id);}
- public boolean existeCpf(String v,Long id){return jpa.existeCpf(v,id);}
- public boolean existeEmail(String v,Long id){return jpa.existeEmail(v,id);}
- public boolean existeMatricula(String v){return jpa.existsByMatricula(v);}
- private Aluno dominio(AlunoEntity e){return Aluno.builder().id(e.getId()).nomeCompleto(e.getNomeCompleto()).email(e.getEmail()).cpf(e.getCpf()).telefone(e.getTelefone()).foto(e.getFoto()).matricula(e.getMatricula()).status(e.getStatus()).usuarioExcluido(e.isUsuarioExcluido()).version(e.getVersion()).build();}
- private AlunoEntity entidade(Aluno a){AlunoEntity e=new AlunoEntity();e.setId(a.getId());e.setNomeCompleto(a.getNomeCompleto());e.setEmail(a.getEmail());e.setCpf(a.getCpf());e.setTelefone(a.getTelefone());e.setFoto(a.getFoto());e.setMatricula(a.getMatricula());e.setStatus(a.getStatus());e.setUsuarioExcluido(a.isUsuarioExcluido());e.setVersion(a.getVersion());return e;}
+    @Override
+    public Page<Aluno> listar(String nome, String matricula, StatusAluno status, Pageable paginacao) {
+        return repositorioJpa.filtrar(nome, matricula, status, paginacao)
+                .map(this::paraDominio);
+    }
+
+    @Override
+    public Optional<Aluno> buscarPorId(Long identificadorAluno) {
+        return repositorioJpa.findById(identificadorAluno).map(this::paraDominio);
+    }
+
+    /** Converte o aluno para entidade, salva e devolve os dados persistidos. */
+    @Override
+    public Aluno salvar(Aluno aluno) {
+        AlunoEntity entidadeSalva = repositorioJpa.saveAndFlush(paraEntidade(aluno));
+        return paraDominio(entidadeSalva);
+    }
+
+    @Override
+    public void inativar(Long identificadorAluno) {
+        repositorioJpa.inativar(identificadorAluno);
+    }
+
+    @Override
+    public boolean existeCpf(String cpf, Long identificadorIgnorado) {
+        return repositorioJpa.existeCpf(cpf, identificadorIgnorado);
+    }
+
+    @Override
+    public boolean existeEmail(String email, Long identificadorIgnorado) {
+        return repositorioJpa.existeEmail(email, identificadorIgnorado);
+    }
+
+    @Override
+    public boolean existeMatricula(String matricula) {
+        return repositorioJpa.existsByMatricula(matricula);
+    }
+
+    /** Mapeia os dados do banco para o modelo usado no serviço. */
+    private Aluno paraDominio(AlunoEntity entidade) {
+        return Aluno.builder()
+                .id(entidade.getId())
+                .nomeCompleto(entidade.getNomeCompleto())
+                .email(entidade.getEmail())
+                .cpf(entidade.getCpf())
+                .telefone(entidade.getTelefone())
+                .foto(entidade.getFoto())
+                .matricula(entidade.getMatricula())
+                .status(entidade.getStatus())
+                .usuarioExcluido(entidade.isUsuarioExcluido())
+                .version(entidade.getVersion())
+                .build();
+    }
+
+    /** Prepara uma entidade JPA para inclusão ou atualização no banco. */
+    private AlunoEntity paraEntidade(Aluno aluno) {
+        AlunoEntity entidade = new AlunoEntity();
+        entidade.setId(aluno.getId());
+        entidade.setNomeCompleto(aluno.getNomeCompleto());
+        entidade.setEmail(aluno.getEmail());
+        entidade.setCpf(aluno.getCpf());
+        entidade.setTelefone(aluno.getTelefone());
+        entidade.setFoto(aluno.getFoto());
+        entidade.setMatricula(aluno.getMatricula());
+        entidade.setStatus(aluno.getStatus());
+        entidade.setUsuarioExcluido(aluno.isUsuarioExcluido());
+        entidade.setVersion(aluno.getVersion());
+        return entidade;
+    }
 }
