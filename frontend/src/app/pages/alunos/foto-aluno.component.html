@@ -1,7 +1,14 @@
 <div class="foto-centro">
-  <img *ngIf="foto" [src]="foto" alt="Pré-visualização da foto do aluno" class="preview" />
+  <!-- Mostra a imagem escolhida ou um espaço reservado quando não há foto. -->
+  <img
+    *ngIf="foto"
+    [src]="foto"
+    alt="Pré-visualização da foto do aluno"
+    class="preview"
+  />
   <div *ngIf="!foto" class="sem-foto">Sem foto</div>
 
+  <!-- O componente filho informa ao formulário qual arquivo foi selecionado. -->
   <label class="upload">
     <span>Adicionar foto</span>
     <input
@@ -12,6 +19,7 @@
     />
   </label>
 
+  <!-- A remoção é controlada pelo formulário de cadastro ou edição. -->
   <button
     *ngIf="foto"
     type="button"
