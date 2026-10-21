@@ -1,12 +1,22 @@
 import {ComponentFixture,TestBed} from '@angular/core/testing';import {provideHttpClient} from '@angular/common/http';import {provideRouter} from '@angular/router';import {ListaAlunosComponent} from './lista-alunos.component';import {AlunoService} from '../../core/services/aluno.service';import {AuthService} from '../../core/auth/auth.service';import {of} from 'rxjs';
+
 describe('ListaAlunosComponent',()=>{let fixture:ComponentFixture<ListaAlunosComponent>;let service:any;const aluno={id:1,nomeCompleto:'Ana Souza',email:'ana@email.com',cpf:'52998224725',telefone:'81999999999',matricula:'20260001',status:'ATIVO' as const};beforeEach(async()=>{sessionStorage.clear();service={listar:jasmine.createSpy().and.returnValue(of({content:[aluno],totalElements:1,totalPages:1,number:0,size:10})),excluir:jasmine.createSpy().and.returnValue(of(void 0))};await TestBed.configureTestingModule({imports:[ListaAlunosComponent],providers:[provideHttpClient(),provideRouter([]),{provide:AlunoService,useValue:service},{provide:AuthService,useValue:{administrador:()=>true,logout:()=>{}}}]}).compileComponents();fixture=TestBed.createComponent(ListaAlunosComponent);fixture.detectChanges()});
+
 it('deve carregar a lista de alunos',()=>{expect(fixture.nativeElement.textContent).toContain('Ana Souza')});
+
 it('deve excluir aluno pelo fluxo de confirmacao',()=>{const botao=fixture.nativeElement.querySelector('.acao.excluir') as HTMLButtonElement;botao.click();fixture.detectChanges();expect(fixture.nativeElement.textContent).toContain('Confirmar Exclusão');const confirmar=fixture.nativeElement.querySelector('.modal .perigo') as HTMLButtonElement;confirmar.click();fixture.detectChanges();expect(service.excluir).toHaveBeenCalledWith(1);expect(fixture.componentInstance.feedback).toBe('Aluno excluído com sucesso.')});
+
 it('deve buscar texto como nome',()=>{const c=fixture.componentInstance;c.termo='  ana  ';c.buscarTermo();expect(c.nome).toBe('ana');expect(c.matricula).toBe('');expect(c.pagina).toBe(0)});
+
 it('deve buscar numeros como matricula',()=>{const c=fixture.componentInstance;c.termo=' 202600 ';c.buscarTermo();expect(c.nome).toBe('');expect(c.matricula).toBe('202600');expect(c.pagina).toBe(0)});
+
 it('deve limpar busca filtros e voltar para primeira pagina',()=>{const c=fixture.componentInstance;c.termo='Ana';c.nome='Ana';c.matricula='2026';c.status='ATIVO';c.pagina=2;c.limpar();expect(c.termo).toBe('');expect(c.nome).toBe('');expect(c.matricula).toBe('');expect(c.status).toBe('');expect(c.pagina).toBe(0)});
+
 it('deve fechar exclusao sem chamar o backend ao cancelar',()=>{const c=fixture.componentInstance;c.abrirExclusao(aluno,new Event('click'));c.cancelarExclusao();expect(c.alunoExcluir).toBeUndefined();expect(service.excluir).not.toHaveBeenCalled()});
+
 it('deve voltar uma pagina ao excluir o ultimo item',()=>{const c=fixture.componentInstance;c.pagina=2;c.dados={content:[aluno],totalElements:21,totalPages:3,number:2,size:10};c.alunoExcluir=aluno;c.confirmarExclusao();expect(c.pagina).toBe(1)});
+
 it('deve restaurar busca filtro e pagina salvos',()=>{sessionStorage.setItem('listaAlunos',JSON.stringify({nome:'Ana',matricula:'',status:'ATIVO',pagina:2}));const c=fixture.componentInstance;c.ngOnInit();expect(c.nome).toBe('Ana');expect(c.status).toBe('ATIVO');expect(c.pagina).toBe(2)});it('deve mostrar as acoes de administrador',()=>{const html=fixture.nativeElement as HTMLElement;expect(html.querySelector('.acao.editar')).not.toBeNull();expect(html.querySelector('.acao.excluir')).not.toBeNull()});
+
 it('deve abrir o modal com nome e matricula do aluno',()=>{const botao=fixture.nativeElement.querySelector('.acao.excluir') as HTMLButtonElement;botao.click();fixture.detectChanges();const texto=(fixture.nativeElement.querySelector('.modal') as HTMLElement).textContent||'';expect(texto).toContain('Ana Souza');expect(texto).toContain('20260001')});
 });
