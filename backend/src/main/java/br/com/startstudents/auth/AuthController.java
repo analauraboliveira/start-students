@@ -1,28 +1,41 @@
 package br.com.startstudents.auth;
-import java.util.Map;
 
+import jakarta.validation.Valid;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-
-
-// faz o login local do prototipo e define o perfil do usurio
-
-// login local do prototipo com os dois perfis pedidos
-@RestController @RequestMapping("/api/auth") @RequiredArgsConstructor
+/** Login local do protótipo, com perfis de administrador e leitor. */
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
- private final JwtService jwt;
- @PostMapping("/login")
- public ResponseEntity<?> login(@Valid @RequestBody LoginRequest r){
-  PerfilUsuario perfil=null;
-  if(r.usuario().equals("adminuser")&&r.senha().equals("admin123"))perfil=PerfilUsuario.ADMINISTRADOR;
-  if(r.usuario().equals("leitoruser")&&r.senha().equals("leitor123"))perfil=PerfilUsuario.LEITOR;
-  if(perfil==null)return ResponseEntity.status(401).body(Map.of("mensagem","Usuário ou senha inválidos."));
-  return ResponseEntity.ok(new LoginResponse(jwt.gerar(r.usuario(),perfil.name()),r.usuario(),perfil));
- }
+
+    private final JwtService jwtService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest requisicao) {
+        PerfilUsuario perfil = null;
+
+        // Estes usuários são fixos porque a autenticação é apenas demonstrativa.
+        if (requisicao.usuario().equals("adminuser") && requisicao.senha().equals("admin123")) {
+            perfil = PerfilUsuario.ADMINISTRADOR;
+        }
+
+        if (requisicao.usuario().equals("leitoruser") && requisicao.senha().equals("leitor123")) {
+            perfil = PerfilUsuario.LEITOR;
+        }
+
+        if (perfil == null) {
+            return ResponseEntity.status(401)
+                    .body(Map.of("mensagem", "Usuário ou senha inválidos."));
+        }
+
+        String token = jwtService.gerar(requisicao.usuario(), perfil.name());
+        return ResponseEntity.ok(new LoginResponse(token, requisicao.usuario(), perfil));
+    }
 }
