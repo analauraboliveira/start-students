@@ -1,1 +1,7 @@
-package br.com.startstudents.auth; public enum PerfilUsuario { ADMINISTRADOR, LEITOR }
+package br.com.startstudents.auth;
+
+/** Perfis usados para controlar as permissões da API. */
+public enum PerfilUsuario {
+    ADMINISTRADOR,
+    LEITOR
+}
