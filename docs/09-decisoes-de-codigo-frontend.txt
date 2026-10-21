@@ -1,0 +1,91 @@
+PRINCIPAIS DECISÕES DE CÓDIGO — FRONTEND Start Students
+
+1.  ORGANIZAÇÃO POR RESPONSABILIDADES 
+
+O frontend foi dividido, principalmente, em:
+
+-   core/ — autenticação, guards, interceptor, serviços e validadores.
+-   models/ — modelos usados pela aplicação.
+-   pages/ — componentes das telas e fluxos.
+
+A separação evita concentrar autenticação, comunicação com a API e navegação nos componentes de tela.
+
+2.  COMUNICAÇÃO COM A API 
+
+AlunoService centraliza as chamadas relacionadas aos alunos. Os componentes utilizam o serviço para listar, consultar, cadastrar, editar e excluir.
+
+Isso reduz duplicação e deixa os componentes focados na apresentação e interação.
+
+3.  AUTENTICAÇÃO 
+
+A autenticação é dividida entre:
+
+-   auth.service.ts — estado da sessão e autenticação.
+-   auth.guard.ts — proteção das rotas.
+-   auth.interceptor.ts — tratamento das requisições autenticadas.
+
+4.  CONTROLE DE PERFIL 
+
+O frontend diferencia Administrador e Leitor. A interface restringe ações como cadastro, edição e exclusão de acordo com o perfil.
+
+Essa proteção é complementar à autorização do backend, que continua sendo a camada responsável por garantir a permissão real.
+
+5.  PROTEÇÃO CONTRA SAÍDA COM ALTERAÇÕES
+
+alteracoes-pendentes.guard.ts protege o formulário contra navegação acidental quando existem alterações não salvas.
+
+A decisão evita perda de dados durante a navegação.
+
+6.  FORMULÁRIO 
+
+O formulário concentra os fluxos de cadastro e edição. Campos que não devem ser alterados na edição, como matrícula e CPF conforme as regras do projeto, são tratados de maneira diferente dos campos editáveis.
+
+A validação no cliente fornece feedback antes do envio à API.
+
+7.  VALIDAÇÃO DE CPF 
+
+Foi criado um validador específico em: core/validators/cpf.validator.ts
+
+Ele permite validar o CPF no frontend antes do envio. Existe teste específico em: core/validators/cpf.validator.spec.ts
+
+A validação do frontend complementa, mas não substitui, a validação do backend.
+
+8.  LISTAGEM 
+
+A tela de alunos reúne:
+
+-   busca;
+-   filtro por status;
+-   paginação;
+-   ordenação;
+-   ações de detalhes, edição e exclusão conforme o perfil.
+
+Os critérios de busca são tratados de forma explícita para manter a interação previsível.
+
+9.  ESTADO DA LISTAGEM 
+
+Informações relevantes da listagem, como filtros e página atual, podem ser preservadas para melhorar a continuidade da navegação.
+
+10. EXCLUSÃO 
+
+A exclusão possui confirmação na interface antes de chamar a API. Depois da operação, a listagem é atualizada.
+
+A exclusão lógica propriamente dita permanece como responsabilidade do backend.
+
+11. DETALHES 
+
+A visualização de detalhes possui componente próprio, separado do formulário de edição. Isso mantém consulta e alteração como responsabilidades distintas.
+
+12. TESTES 
+
+O frontend utiliza Jasmine/Karma. Os principais testes ficam em:
+
+-   formulario-aluno.component.spec.ts
+-   lista-alunos.component.spec.ts
+-   cpf.validator.spec.ts
+
+Os testes cobrem comportamentos do formulário, listagem, validações, permissões, exclusão e proteção contra saída com alterações não salvas.
+
+13. ESCOPO 
+
+O frontend utiliza Angular 18 e TypeScript. A prioridade foi implementar os fluxos obrigatórios do protótipo com separação clara de responsabilidades, sem adicionar funcionalidades de produto fora do escopo.

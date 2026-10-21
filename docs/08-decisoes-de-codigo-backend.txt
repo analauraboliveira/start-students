@@ -1,0 +1,84 @@
+PRINCIPAIS DECISÕES DE CÓDIGO — BACKEND Start Students
+
+1.  ARQUITETURA 
+
+Foi adotada uma arquitetura hexagonal (Ports and Adapters), separando regras de negócio, casos de uso e infraestrutura.
+
+Organização principal: 
+- domain/ — modelos e exceções centrais do domínio. 
+- application/ports/in/ — contratos dos casos de uso. 
+- application/ports/out/ — contratos necessários para a infraestrutura. 
+- application/service/ — implementação dos casos de uso e regras de negócio. 
+- adapters/in/web/ — controllers, DTOs e tratamento HTTP. 
+- adapters/out/persistence/ — persistência com JPA e H2. 
+- auth/ — autenticação, JWT e perfis. 
+- config/ — configurações da aplicação.
+
+A separação reduz o acoplamento entre as regras do sistema e tecnologias específicas.
+
+2.  REGRAS DE NEGÓCIO NA CAMADA DE APLICAÇÃO 
+
+GerenciarAlunoService concentra os principais fluxos de aluno. O controller recebe a requisição e delega o processamento para a camada de aplicação.
+
+Isso evita colocar regras de negócio diretamente nos controllers e facilita testes unitários.
+
+3.  VALIDAÇÕES SEPARADAS 
+
+As validações específicas foram isoladas em componentes próprios:
+
+-   ValidadorCpf.java
+-   ValidadorFoto.java
+-   GeradorMatricula.java
+
+Isso reduz a concentração de responsabilidades e permite testes específicos, como ValidadorCpfTest.java.
+
+4.  EXCLUSÃO LÓGICA 
+
+A exclusão não remove fisicamente o aluno do banco. O registro passa para um estado inativo e deixa de aparecer entre os alunos ativos.
+
+A decisão preserva o histórico e permite que a exclusão permaneça após reinicializações do backend.
+
+5.  MATRÍCULA
+
+A matrícula é gerada pela aplicação por meio de GeradorMatricula. Na edição, a identificação existente é preservada em vez de ser tratada como um campo comum editável.
+
+6.  PERSISTÊNCIA COM H2 
+
+O projeto usa H2 para simplificar a execução local. O banco é persistido em arquivo, permitindo manter alterações entre reinicializações.
+
+A massa inicial é carregada somente quando o banco está vazio, evitando recriação dos dados a cada inicialização.
+
+7.  SEPARAÇÃO ENTRE DOMÍNIO E PERSISTÊNCIA 
+
+AlunoEntity e AlunoJpaRepository ficam na camada de persistência. A aplicação utiliza portas e o AlunoRepositoryAdapter para conversar com essa infraestrutura.
+
+Assim, as regras centrais não ficam diretamente dependentes de JPA ou H2.
+
+8.  API REST E DTOs 
+
+AlunoController concentra os endpoints de alunos.
+
+DTOs são utilizados para representar entrada e saída da API, evitando usar diretamente as entidades de persistência como contrato HTTP.
+
+9.  TRATAMENTO GLOBAL DE ERROS 
+
+TratadorGlobalException centraliza a conversão das exceções para respostas HTTP. Isso mantém os controllers menores e padroniza os erros da API.
+
+10. AUTENTICAÇÃO E AUTORIZAÇÃO
+
+A autenticação utiliza login e JWT. O backend possui AuthController, JwtService e JwtFiltro, além dos perfis ADMINISTRADOR e LEITOR.
+
+As permissões são verificadas no backend, e não somente pela interface. Assim, uma chamada direta à API também respeita as restrições de cada perfil.
+
+11. TESTES 
+
+O backend utiliza JUnit 5, Mockito e MockMvc, combinando testes unitários e de integração.
+
+Principais arquivos: - GerenciarAlunoServiceTest.java -
+ValidadorCpfTest.java - AlunoControllerIntegrationTest.java
+
+12. ESCOPO 
+
+O backend foi mantido como aplicação local do protótipo. Por isso, decisões como H2 e usuários locais priorizam facilidade de execução e demonstração das regras obrigatórias.
+
+Recursos de produção, como banco externo, gerenciamento externo de segredos, Docker, CI/CD e auditoria avançada, ficaram fora do escopo desta entrega.

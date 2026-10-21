@@ -1,6 +1,6 @@
 LIMITAÇÕES E PRÓXIMOS PASSOS
 
-Esta entrega é propositalmente enxuta. O núcleo obrigatório do desafio foi priorizado, mas ela não pretende representar um produto pronto para produção. A referência de aproximadamente 75% considera também endurecimento de produção, opcionais e cobertura adicional.
+Esta entrega ainda não está com tudo que foi passado no documento do projeto. O núcleo obrigatório do desafio foi priorizado, mas ainda não é um produto 100% pronto para produção. Assim, a referência de aproximadamente "75% feito" considera também endurecimento de produção, opcionais e cobertura adicional.
 
 O que ainda pode evoluir:
 1. ampliar testes de frontend e combinações de integração;
