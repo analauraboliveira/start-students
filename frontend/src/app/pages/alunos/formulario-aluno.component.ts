@@ -98,12 +98,20 @@ export class FormularioAlunoComponent implements OnInit {
 
   /** Converte os erros de validação em mensagens para o HTML. */
   mensagemCampo(nomeCampo: keyof typeof this.formulario.controls): string {
-    if (this.errosCampos[nomeCampo]) return this.errosCampos[nomeCampo];
+    if (this.errosCampos[nomeCampo]) {
+      return this.errosCampos[nomeCampo];
+    }
 
     const erros = this.formulario.controls[nomeCampo].errors;
-    if (erros?.['required']) return 'Este campo é obrigatório.';
-    if (erros?.['email']) return 'Informe um e-mail válido.';
-    if (nomeCampo === 'telefone') return 'Informe DDD e telefone com 10 ou 11 dígitos.';
+    if (erros?.['required']) {
+      return 'Este campo é obrigatório.';
+    }
+    if (erros?.['email']) {
+      return 'Informe um e-mail válido.';
+    }
+    if (nomeCampo === 'telefone') {
+      return 'Informe DDD e telefone com 10 ou 11 dígitos.';
+    }
     if (nomeCampo === 'nomeCompleto') {
       return 'Use de 3 a 120 caracteres, apenas letras e pontuação permitida.';
     }
@@ -114,7 +122,9 @@ export class FormularioAlunoComponent implements OnInit {
   fotoSelecionada(evento: Event): void {
     const campoArquivo = evento.target as HTMLInputElement;
     const arquivo = campoArquivo.files?.[0];
-    if (!arquivo) return;
+    if (!arquivo) {
+      return;
+    }
 
     if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
       this.erro = 'A foto deve ser JPEG ou PNG.';
@@ -127,6 +137,7 @@ export class FormularioAlunoComponent implements OnInit {
       return;
     }
 
+    // Lê a foto e atualiza o controle reativo depois da conversão.
     const leitorArquivo = new FileReader();
     leitorArquivo.onload = () => {
       this.formulario.controls.foto.setValue(String(leitorArquivo.result));
@@ -194,6 +205,8 @@ export class FormularioAlunoComponent implements OnInit {
   // Protege também contra fechamento ou atualização da aba do navegador.
   @HostListener('window:beforeunload', ['$event'])
   confirmarFechamento(evento: BeforeUnloadEvent): void {
-    if (this.formulario.dirty && !this.salvo) evento.preventDefault();
+    if (this.formulario.dirty && !this.salvo) {
+      evento.preventDefault();
+    }
   }
 }
