@@ -19,6 +19,7 @@ import { FotoAlunoComponent } from './foto-aluno.component';
   templateUrl: './formulario-aluno.component.html',
 })
 export class FormularioAlunoComponent implements OnInit {
+  // Formulário reativo de edição: CPF e matrícula ficam fora dos controles editáveis.
   readonly formulario = this.formBuilder.nonNullable.group({
     nomeCompleto: ['', [
       Validators.required,
@@ -37,6 +38,7 @@ export class FormularioAlunoComponent implements OnInit {
 
   aluno?: Aluno;
   carregando = true;
+  // Estados que controlam os botões e as mensagens exibidas pelo template.
   salvando = false;
   salvo = false;
   semPermissao = false;
@@ -53,6 +55,7 @@ export class FormularioAlunoComponent implements OnInit {
     private readonly router: Router,
   ) {}
 
+  /** Inicializa o fluxo e verifica se a pessoa pode modificar alunos. */
   ngOnInit(): void {
     if (!this.authService.administrador()) {
       this.semPermissao = true;
@@ -87,11 +90,13 @@ export class FormularioAlunoComponent implements OnInit {
     });
   }
 
+  /** Mostra o erro depois que o campo foi tocado ou houve tentativa de salvar. */
   campoInvalido(nomeCampo: keyof typeof this.formulario.controls): boolean {
     const controle = this.formulario.controls[nomeCampo];
     return controle.invalid && (controle.touched || this.tentouSalvar);
   }
 
+  /** Converte os erros de validação em mensagens para o HTML. */
   mensagemCampo(nomeCampo: keyof typeof this.formulario.controls): string {
     if (this.errosCampos[nomeCampo]) return this.errosCampos[nomeCampo];
 
@@ -105,6 +110,7 @@ export class FormularioAlunoComponent implements OnInit {
     return '';
   }
 
+  /** Recebe a imagem do componente filho e valida tipo e tamanho do arquivo. */
   fotoSelecionada(evento: Event): void {
     const campoArquivo = evento.target as HTMLInputElement;
     const arquivo = campoArquivo.files?.[0];
@@ -133,6 +139,7 @@ export class FormularioAlunoComponent implements OnInit {
     leitorArquivo.readAsDataURL(arquivo);
   }
 
+  /** Limpa a foto e marca o formulário como alterado para o guard funcionar. */
   removerFoto(): void {
     this.formulario.controls.foto.setValue('');
     this.formulario.controls.foto.markAsDirty();
@@ -172,16 +179,19 @@ export class FormularioAlunoComponent implements OnInit {
     });
   }
 
+  /** Volta à listagem; o guard verifica alterações ainda não salvas. */
   cancelar(): void {
     void this.router.navigate(['/alunos']);
   }
 
+  /** Evita descartar alterações sem confirmação. */
   podeSair(): boolean {
     return this.salvo
       || !this.formulario.dirty
       || confirm('Você tem alterações não salvas. Deseja sair mesmo?');
   }
 
+  // Protege também contra fechamento ou atualização da aba do navegador.
   @HostListener('window:beforeunload', ['$event'])
   confirmarFechamento(evento: BeforeUnloadEvent): void {
     if (this.formulario.dirty && !this.salvo) evento.preventDefault();
