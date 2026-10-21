@@ -6,24 +6,257 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { AlunoService } from '../../core/services/aluno.service';
 import { Aluno, Pagina, StatusAluno } from '../../models/aluno.model';
-/** Lista alunos, mantém filtros e abre os fluxos de detalhes, edição e exclusão. */
+
+/**
+ * Tela principal dos alunos.
+ *
+ * Responsabilidades:
+ * 1. Buscar alunos na API com filtros e paginação.
+ * 2. Manter a busca ao voltar da página de detalhes.
+ * 3. Controlar a confirmação de exclusão.
+ *
+ * Cadastro, edição e detalhes têm seus próprios componentes.
+ */
 @Component({
   selector: 'app-lista-alunos',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './lista-alunos.component.html',
 })
-
 export class ListaAlunosComponent implements OnInit {
-  dados?:Pagina<Aluno>;termo='';nome='';matricula='';status:''|StatusAluno='';ordenacao='nomeCompleto,asc';pagina=0;carregando=false;erro='';feedback='';admin=false;alunoExcluir?:Aluno;excluindo=false;acionador?:HTMLElement;constructor(
+  // Dados recebidos do backend.
+  dados?: Pagina<Aluno>;
+
+  // Filtros e opções da listagem.
+  termo = '';
+  nome = '';
+  matricula = '';
+  status: '' | StatusAluno = '';
+  ordenacao = 'nomeCompleto,asc';
+  pagina = 0;
+
+  // Estados exibidos na tela.
+  carregando = false;
+  erro = '';
+  feedback = '';
+  admin = false;
+
+  // Dados usados pelo modal de confirmação de exclusão.
+  alunoExcluir?: Aluno;
+  excluindo = false;
+  acionador?: HTMLElement;
+
+  constructor(
     private readonly alunos: AlunoService,
     private readonly auth: AuthService,
     private readonly router: Router,
   ) {}
-// Recupera os filtros usados antes de entrar nos detalhes.
-  ngOnInit() {this.admin=this.auth.administrador();this.restaurar();this.termo=this.nome||this.matricula;this.carregar(this.pagina)}// Identifica se a busca principal contém nome ou matrícula.
-  buscarTermo() {const t=this.termo.trim();const matricula=/^\d+$/.test(t);this.nome=matricula?'':t;this.matricula=matricula?t:'';this.buscar()}buscar(){this.carregar(0)}limpar(){this.termo='';this.nome='';this.matricula='';this.status='';this.carregar(0)}// A API aplica filtros, ordenação e paginação.
-  carregar(p: number) {this.pagina=p;this.carregando=true;this.erro='';this.salvarEstado();this.alunos.listar({nome:this.nome,matricula:this.matricula,status:this.status,page:p,sort:this.ordenacao}).subscribe({next:d=>{this.dados=d;this.carregando=false},error:()=>{this.erro='Não foi possível carregar os alunos.';this.carregando=false}})}paginas(){return Array.from({length:this.dados?.totalPages||0},(_,i)=>i)}// Abre a confirmação e move o foco para o modal.
-  abrirExclusao(a: Aluno, e: Event) {this.alunoExcluir=a;this.acionador=e.currentTarget as HTMLElement;setTimeout(()=>document.querySelector<HTMLElement>('.modal .secundario')?.focus())}cancelarExclusao(){this.alunoExcluir=undefined;setTimeout(()=>this.acionador?.focus())}@HostListener('document:keydown',['$event'])teclaModal(e:KeyboardEvent){if(!this.alunoExcluir)return;if(e.key==='Escape'){e.preventDefault();this.cancelarExclusao();return}if(e.key!=='Tab')return;const botoes=Array.from(document.querySelectorAll<HTMLElement>('.modal button:not([disabled])'));if(!botoes.length)return;const primeiro=botoes[0],ultimo=botoes[botoes.length-1];if(e.shiftKey&&document.activeElement===primeiro){e.preventDefault();ultimo.focus()}else if(!e.shiftKey&&document.activeElement===ultimo){e.preventDefault();primeiro.focus()}}// Exclui somente depois da confirmação da pessoa usuária.
-  confirmarExclusao() {if(!this.alunoExcluir)return;this.excluindo=true;this.alunos.excluir(this.alunoExcluir.id).subscribe({next:()=>{this.feedback='Aluno excluído com sucesso.';if((this.dados?.content.length||0)===1&&this.pagina>0)this.pagina--;this.alunoExcluir=undefined;this.excluindo=false;this.carregar(this.pagina);setTimeout(()=>this.acionador?.focus())},error:e=>{this.erro=e.status===403?'Você não tem permissão para esta ação.':'Não foi possível excluir.';this.excluindo=false;this.alunoExcluir=undefined;setTimeout(()=>this.acionador?.focus())}})}// Guarda os filtros no navegador para não perder a busca.
-  private salvarEstado() {sessionStorage.setItem('listaAlunos',JSON.stringify({nome:this.nome,matricula:this.matricula,status:this.status,ordenacao:this.ordenacao,pagina:this.pagina}))}private restaurar(){try{const e=JSON.parse(sessionStorage.getItem('listaAlunos')||'null');if(e){this.nome=e.nome||'';this.matricula=e.matricula||'';this.status=e.status||'';this.ordenacao=e.ordenacao||'nomeCompleto,asc';this.pagina=e.pagina||0}}catch{}}sair(){sessionStorage.removeItem('listaAlunos');this.auth.logout();this.router.navigate(['/login'])}}
+
+  ngOnInit(): void {
+    // As ações de cadastro, edição e exclusão só aparecem para administradores.
+    this.admin = this.auth.administrador();
+
+    // Restaura a pesquisa anterior, inclusive a página em que a pessoa estava.
+    this.restaurar();
+    this.termo = this.nome || this.matricula;
+    this.carregar(this.pagina);
+  }
+
+  /** Busca por matrícula quando o texto tem só números; caso contrário, por nome. */
+  buscarTermo(): void {
+    const textoDigitado = this.termo.trim();
+    const pesquisaPorMatricula = /^\d+$/.test(textoDigitado);
+
+    this.nome = pesquisaPorMatricula ? '' : textoDigitado;
+    this.matricula = pesquisaPorMatricula ? textoDigitado : '';
+
+    this.buscar();
+  }
+
+  /** Uma nova pesquisa sempre começa pela primeira página. */
+  buscar(): void {
+    this.carregar(0);
+  }
+
+  /** Limpa todos os filtros, mas mantém a ordenação escolhida. */
+  limpar(): void {
+    this.termo = '';
+    this.nome = '';
+    this.matricula = '';
+    this.status = '';
+
+    this.carregar(0);
+  }
+
+  /** Consulta a API e atualiza os estados de carregamento e erro. */
+  carregar(numeroPagina: number): void {
+    this.pagina = numeroPagina;
+    this.carregando = true;
+    this.erro = '';
+
+    this.salvarEstado();
+
+    this.alunos.listar({
+      nome: this.nome,
+      matricula: this.matricula,
+      status: this.status,
+      page: numeroPagina,
+      sort: this.ordenacao,
+    }).subscribe({
+      next: (paginaRecebida) => {
+        this.dados = paginaRecebida;
+        this.carregando = false;
+      },
+      error: () => {
+        this.erro = 'Não foi possível carregar os alunos.';
+        this.carregando = false;
+      },
+    });
+  }
+
+  /** Gera os números das páginas para os botões de paginação. */
+  paginas(): number[] {
+    const totalPaginas = this.dados?.totalPages ?? 0;
+
+    return Array.from(
+      { length: totalPaginas },
+      (_, indicePagina) => indicePagina,
+    );
+  }
+
+  /** Abre a confirmação antes de permitir a exclusão de um aluno. */
+  abrirExclusao(alunoSelecionado: Aluno, evento: Event): void {
+    this.alunoExcluir = alunoSelecionado;
+    this.acionador = evento.currentTarget as HTMLElement;
+
+    // Aguarda o Angular mostrar o modal antes de mover o foco.
+    setTimeout(() => {
+      document.querySelector<HTMLElement>('.modal .secundario')?.focus();
+    });
+  }
+
+  /** Fecha o modal e devolve o foco ao botão que o abriu. */
+  cancelarExclusao(): void {
+    this.alunoExcluir = undefined;
+
+    setTimeout(() => {
+      this.acionador?.focus();
+    });
+  }
+
+  /** Permite fechar com Escape e mantém a navegação por Tab dentro do modal. */
+  @HostListener('document:keydown', ['$event'])
+  teclaModal(evento: KeyboardEvent): void {
+    if (!this.alunoExcluir) {
+      return;
+    }
+
+    if (evento.key === 'Escape') {
+      evento.preventDefault();
+      this.cancelarExclusao();
+      return;
+    }
+
+    if (evento.key !== 'Tab') {
+      return;
+    }
+
+    const botoesModal = Array.from(
+      document.querySelectorAll<HTMLElement>('.modal button:not([disabled])'),
+    );
+
+    if (botoesModal.length === 0) {
+      return;
+    }
+
+    const primeiroBotao = botoesModal[0];
+    const ultimoBotao = botoesModal[botoesModal.length - 1];
+
+    if (evento.shiftKey && document.activeElement === primeiroBotao) {
+      evento.preventDefault();
+      ultimoBotao.focus();
+    } else if (!evento.shiftKey && document.activeElement === ultimoBotao) {
+      evento.preventDefault();
+      primeiroBotao.focus();
+    }
+  }
+
+  /** Envia a exclusão à API apenas após a confirmação no modal. */
+  confirmarExclusao(): void {
+    if (!this.alunoExcluir || this.excluindo) {
+      return;
+    }
+
+    this.excluindo = true;
+    const identificadorAluno = this.alunoExcluir.id;
+
+    this.alunos.excluir(identificadorAluno).subscribe({
+      next: () => {
+        this.feedback = 'Aluno excluído com sucesso.';
+
+        // Se a última linha da página foi removida, volta uma página.
+        if ((this.dados?.content.length ?? 0) === 1 && this.pagina > 0) {
+          this.pagina--;
+        }
+
+        this.alunoExcluir = undefined;
+        this.excluindo = false;
+        this.carregar(this.pagina);
+
+        setTimeout(() => this.acionador?.focus());
+      },
+      error: (respostaErro) => {
+        this.erro = respostaErro.status === 403
+          ? 'Você não tem permissão para esta ação.'
+          : 'Não foi possível excluir.';
+
+        this.excluindo = false;
+        this.alunoExcluir = undefined;
+
+        setTimeout(() => this.acionador?.focus());
+      },
+    });
+  }
+
+  /** Guarda filtros e página no navegador para restaurar a lista depois. */
+  private salvarEstado(): void {
+    const estadoAtual = {
+      nome: this.nome,
+      matricula: this.matricula,
+      status: this.status,
+      ordenacao: this.ordenacao,
+      pagina: this.pagina,
+    };
+
+    sessionStorage.setItem('listaAlunos', JSON.stringify(estadoAtual));
+  }
+
+  /** Lê o estado salvo; se estiver inválido, mantém os filtros iniciais. */
+  private restaurar(): void {
+    try {
+      const estadoSalvo = JSON.parse(
+        sessionStorage.getItem('listaAlunos') || 'null',
+      );
+
+      if (!estadoSalvo) {
+        return;
+      }
+
+      this.nome = estadoSalvo.nome || '';
+      this.matricula = estadoSalvo.matricula || '';
+      this.status = estadoSalvo.status || '';
+      this.ordenacao = estadoSalvo.ordenacao || 'nomeCompleto,asc';
+      this.pagina = estadoSalvo.pagina || 0;
+    } catch {
+      // Não impede a abertura da página se o armazenamento estiver inválido.
+    }
+  }
+
+  /** Limpa a sessão e retorna para a tela de login. */
+  sair(): void {
+    sessionStorage.removeItem('listaAlunos');
+    this.auth.logout();
+
+    void this.router.navigate(['/login']);
+  }
+}
