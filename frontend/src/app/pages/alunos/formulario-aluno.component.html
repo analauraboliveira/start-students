@@ -18,32 +18,11 @@
       novalidate
     >
       <!-- Foto: mostra a imagem atual e permite substituir ou remover. -->
-      <div class="foto-centro">
-        <img
-          *ngIf="formulario.controls.foto.value"
-          [src]="formulario.controls.foto.value"
-          alt="Pré-visualização da foto do aluno"
-          class="preview"
-        />
-        <div *ngIf="!formulario.controls.foto.value" class="sem-foto">Sem foto</div>
-        <label class="upload">
-          <span>Adicionar foto</span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png"
-            aria-label="Adicionar foto"
-            (change)="fotoSelecionada($event)"
-          />
-        </label>
-        <button
-          *ngIf="formulario.controls.foto.value"
-          type="button"
-          class="secundario"
-          (click)="removerFoto()"
-        >
-          Remover foto
-        </button>
-      </div>
+      <app-foto-aluno
+        [foto]="formulario.controls.foto.value"
+        (selecionar)="fotoSelecionada($event)"
+        (remover)="removerFoto()"
+      ></app-foto-aluno>
 
       <!-- Dados que podem ser editados. -->
       <label for="editar-nome">Nome Completo</label>
