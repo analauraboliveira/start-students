@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { AlunoService } from '../../core/services/aluno.service';
 import { Aluno } from '../../models/aluno.model';
+import { DadosAlunoComponent } from './dados-aluno.component';
 
 /**
  * Exibe os dados do aluno em um modal somente de leitura.
@@ -12,7 +13,7 @@ import { Aluno } from '../../models/aluno.model';
 @Component({
   selector: 'app-detalhes-aluno',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DadosAlunoComponent],
   templateUrl: './detalhes-aluno.component.html',
 })
 export class DetalhesAlunoComponent implements OnInit {
