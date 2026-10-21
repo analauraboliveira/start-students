@@ -1,10 +1,13 @@
 package br.com.startstudents.application.service;
+
 import br.com.startstudents.application.ports.out.AlunoRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import java.time.Year;
 import java.util.concurrent.ThreadLocalRandom;
+
 @Component @RequiredArgsConstructor
+
 public class GeradorMatricula {
  private final AlunoRepositoryPort repository;
  public String gerar(){

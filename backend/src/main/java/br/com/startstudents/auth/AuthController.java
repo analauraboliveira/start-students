@@ -1,8 +1,18 @@
 package br.com.startstudents.auth;
-import jakarta.validation.Valid;import lombok.RequiredArgsConstructor;import org.springframework.http.*;import org.springframework.web.bind.annotation.*;import java.util.Map;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 
-// faz o login local do prototipo e define o perfil do usuario
+// faz o login local do prototipo e define o perfil do usurio
+
 // login local do prototipo com os dois perfis pedidos
 @RestController @RequestMapping("/api/auth") @RequiredArgsConstructor
 public class AuthController {
