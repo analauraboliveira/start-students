@@ -1,6 +1,8 @@
-MAPA DA ESPECIFICAÇÃO - ENTREGA ATUAL
+MAPEAMENTO DE REQUISITOS
 
-O núcleo obrigatório do desafio foi priorizado. A referência de aproximadamente 75% considera um produto completo, incluindo endurecimento para produção, opcionais e cobertura mais ampla; não significa que 25% das regras obrigatórias foram deliberadamente deixadas quebradas.
+O núcleo obrigatório do desafio foi priorizado. Aproxidamente, consegui realizar cerca de 75% do exigido na tarefa, incluindo endurecimento para produção, opcionais e cobertura mais ampla.
+
+O presente documento foi feito para ajudar na organização durante a criação dos códigos, como um acompanhamento do que estava sendo feito e do que ainda estava faltando. Na versão final, atualizei, colocando "OK" em tudo que foi feito.
 
 ESCOPO OBRIGATÓRIO
 OK autenticação, logout e rotas protegidas

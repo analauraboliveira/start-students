@@ -1,7 +1,7 @@
 H2 - COMO CONECTAR E USAR
 
 1. Entre em backend.
-2. Rode: mvn spring-boot:run
+2. Rode: .\mvnw.cmd spring-boot:run
 3. Abra: http://localhost:8080/h2-console
 
 Use:

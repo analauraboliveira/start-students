@@ -12,18 +12,17 @@ usa Spring Boot Test + MockMvc.
 Tem evidência de rota protegida, consulta por LEITOR, bloqueio 403 em operações administrativas, validações e respostas HTTP.
 O teste leitorNaoPodeEditar verifica que PUT com token de LEITOR retorna 403 e que os dados do aluno permanecem iguais.
 
-Na última validação, a suíte backend passou com 18 testes.
+Na última validação feita por mim, a suíte backend passou com 18 testes.
 
 Rodar no Windows:
 cd backend
-.\\mvnw.cmd test
+.\mvnw.cmd clean test
 
 FRONTEND
 ListaAlunosComponent.spec:
-a suíte possui 10 testes e cobre carregamento da lista, busca por nome, busca por matrícula, limpeza de filtros e retorno à primeira página, cancelamento da exclusão, exclusão com confirmação e feedback, retorno à página anterior ao excluir o último item, restauração do estado da listagem, ações de Administrador e identificação do aluno no modal.
+A suíte, inicialmente, possuía 10 testes e cobre carregamento da lista, busca por nome, busca por matrícula, limpeza de filtros e retorno à primeira página, cancelamento da exclusão, exclusão com confirmação e feedback, retorno à página anterior ao excluir o último item, restauração do estado da listagem, ações de Administrador e identificação do aluno no modal. Além disso, foram adicionados oito testes, que cobrem o cálculo dos dígitos do CPF, integração com ngModel, bloqueio do envio inválido e CanDeactivate (recusar/aceitar saída, cancelar uma única vez, formulário sem alterações, dados salvos e proteção das rotas de cadastro e edição). 
 
-A suíte frontend agora possui 18 testes, todos passando na última execução.
-Os oito testes adicionais cobrem o cálculo dos dígitos do CPF, integração com ngModel, bloqueio do envio inválido e CanDeactivate (recusar/aceitar saída, cancelar uma única vez, formulário sem alterações, dados salvos e proteção das rotas de cadastro e edição).
+Na última validação feita por mim, todos os 18 testes passaram.
 
 Rodar:
 cd frontend
