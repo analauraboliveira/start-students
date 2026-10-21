@@ -1,8 +1,11 @@
 package br.com.startstudents.adapters.out.persistence;
+
 import br.com.startstudents.domain.model.StatusAluno;
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity @Table(name="alunos") @Getter @Setter @NoArgsConstructor
+
 public class AlunoEntity {
  @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
  @Column(nullable=false,length=120) private String nomeCompleto;

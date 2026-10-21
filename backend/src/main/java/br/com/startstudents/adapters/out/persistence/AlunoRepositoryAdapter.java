@@ -1,17 +1,21 @@
 package br.com.startstudents.adapters.out.persistence;
+
 import br.com.startstudents.application.ports.out.AlunoRepositoryPort;
 import br.com.startstudents.domain.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 import java.util.Optional;
+
 // faz a ponte entre a regra de negocio e o JPA
 @Component @RequiredArgsConstructor
 public class AlunoRepositoryAdapter implements AlunoRepositoryPort {
  private final AlunoJpaRepository jpa;
+
  // converte as entidades do banco para o modelo do dominio
  public Page<Aluno> listar(String n,String m,StatusAluno s,Pageable p){return jpa.filtrar(n,m,s,p).map(this::dominio);}
  public Optional<Aluno> buscarPorId(Long id){return jpa.findById(id).map(this::dominio);}
+
  // antes de salvar, converte o modelo para entidade JPA
  public Aluno salvar(Aluno a){return dominio(jpa.saveAndFlush(entidade(a)));}
  public void inativar(Long id){jpa.inativar(id);}
