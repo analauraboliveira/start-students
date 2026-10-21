@@ -104,6 +104,7 @@ export class NovoAlunoComponent implements OnInit {
     const leitorArquivo = new FileReader();
     leitorArquivo.onload = () => {
       this.formulario.controls.foto.setValue(String(leitorArquivo.result));
+      this.formulario.controls.foto.markAsDirty();
       this.erro = '';
     };
     leitorArquivo.onerror = () => {
@@ -114,6 +115,7 @@ export class NovoAlunoComponent implements OnInit {
 
   removerFoto(): void {
     this.formulario.controls.foto.setValue('');
+    this.formulario.controls.foto.markAsDirty();
   }
 
   /** Só envia para o backend quando o formulário estiver válido. */
