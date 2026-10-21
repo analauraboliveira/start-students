@@ -1,4 +1,5 @@
 package br.com.startstudents.adapters.in.web;
+
 import br.com.startstudents.adapters.in.web.dto.*;
 import br.com.startstudents.application.ports.in.GerenciarAlunoUseCase;
 import br.com.startstudents.domain.model.*;
@@ -10,7 +11,7 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-// recebe as requisicoes da tela e chama os casos de uso
+// recebe as requisições da tela e chama os casos de uso
 @RestController @RequestMapping("/api/alunos") @RequiredArgsConstructor
 public class AlunoController {
  private final GerenciarAlunoUseCase useCase;
