@@ -16,36 +16,11 @@
       novalidate
     >
       <!-- A foto é opcional e pode ser removida antes do cadastro. -->
-      <div class="foto-centro">
-        <img
-          *ngIf="formulario.controls.foto.value"
-          [src]="formulario.controls.foto.value"
-          alt="Pré-visualização da foto do aluno"
-          class="preview"
-        />
-        <div *ngIf="!formulario.controls.foto.value" class="sem-foto">
-          Sem foto
-        </div>
-
-        <label class="upload">
-          <span>Adicionar foto</span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png"
-            aria-label="Adicionar foto"
-            (change)="fotoSelecionada($event)"
-          />
-        </label>
-
-        <button
-          *ngIf="formulario.controls.foto.value"
-          type="button"
-          class="secundario"
-          (click)="removerFoto()"
-        >
-          Remover foto
-        </button>
-      </div>
+      <app-foto-aluno
+        [foto]="formulario.controls.foto.value"
+        (selecionar)="fotoSelecionada($event)"
+        (remover)="removerFoto()"
+      ></app-foto-aluno>
 
       <!-- Cada campo tem seu próprio controle e suas mensagens de erro. -->
       <label for="novo-nome">Nome Completo</label>
