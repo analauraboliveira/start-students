@@ -4,6 +4,7 @@ import {AbstractControl, NG_VALIDATORS, ValidationErrors, Validator} from '@angu
 export function cpfValido(valor:unknown):boolean {
   const cpf=String(valor??'').replace(/\D/g,'');
   if(cpf.length!==11||/^(\d)\1{10}$/.test(cpf))return false;
+  
   for(let tamanho=9;tamanho<=10;tamanho++){
     let soma=0;
     for(let i=0;i<tamanho;i++)soma+=Number(cpf[i])*(tamanho+1-i);
