@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { AlunoService } from '../../core/services/aluno.service';
@@ -8,8 +7,8 @@ import { DetalhesAlunoComponent } from './detalhes-aluno.component';
 
 describe('DetalhesAlunoComponent', () => {
   it('busca os dados pelo identificador da rota', () => {
-    const servico = jasmine.createSpyObj<AlunoService>('AlunoService', ['buscar']);
-    servico.buscar.and.returnValue(of({
+    const servicoAlunos = jasmine.createSpyObj<AlunoService>('AlunoService', ['buscar']);
+    servicoAlunos.buscar.and.returnValue(of({
       id: 7,
       nomeCompleto: 'Ana Souza',
       cpf: '52998224725',
@@ -22,7 +21,7 @@ describe('DetalhesAlunoComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         provideRouter([]),
-        { provide: AlunoService, useValue: servico },
+        { provide: AlunoService, useValue: servicoAlunos },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: convertToParamMap({ id: '7' }) } },
@@ -30,10 +29,10 @@ describe('DetalhesAlunoComponent', () => {
       ],
     });
 
-    const componente = TestBed.createComponent(DetalhesAlunoComponent);
-    componente.detectChanges();
+    const paginaDetalhes = TestBed.createComponent(DetalhesAlunoComponent);
+    paginaDetalhes.detectChanges();
 
-    expect(servico.buscar).toHaveBeenCalledWith(7);
-    expect(componente.nativeElement.textContent).toContain('Ana Souza');
+    expect(servicoAlunos.buscar).toHaveBeenCalledWith(7);
+    expect(paginaDetalhes.nativeElement.textContent).toContain('Ana Souza');
   });
 });
