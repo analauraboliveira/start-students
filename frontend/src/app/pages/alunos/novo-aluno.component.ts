@@ -25,6 +25,7 @@ import { FotoAlunoComponent } from './foto-aluno.component';
 })
 export class NovoAlunoComponent implements OnInit {
   // Os validadores prontos do Angular cuidam das regras mais comuns.
+  // Controles tipados do cadastro; a matrícula será criada pelo backend.
   readonly formulario = this.formBuilder.nonNullable.group({
     nomeCompleto: ['', [
       Validators.required,
@@ -41,6 +42,7 @@ export class NovoAlunoComponent implements OnInit {
     foto: [''],
   });
 
+  // Estados que controlam os botões e as mensagens exibidas pelo template.
   salvando = false;
   salvo = false;
   tentouSalvar = false;
@@ -56,6 +58,7 @@ export class NovoAlunoComponent implements OnInit {
     private readonly router: Router,
   ) {}
 
+  /** Inicializa o fluxo e verifica se a pessoa pode modificar alunos. */
   ngOnInit(): void {
     this.semPermissao = !this.authService.administrador();
   }
@@ -84,6 +87,7 @@ export class NovoAlunoComponent implements OnInit {
   }
 
   /** Confere formato e tamanho antes de converter a imagem em texto base64. */
+  /** Recebe a imagem do componente filho e valida tipo e tamanho do arquivo. */
   fotoSelecionada(evento: Event): void {
     const campoArquivo = evento.target as HTMLInputElement;
     const arquivo = campoArquivo.files?.[0];
@@ -113,6 +117,7 @@ export class NovoAlunoComponent implements OnInit {
     leitorArquivo.readAsDataURL(arquivo);
   }
 
+  /** Limpa a foto e marca o formulário como alterado para o guard funcionar. */
   removerFoto(): void {
     this.formulario.controls.foto.setValue('');
     this.formulario.controls.foto.markAsDirty();
@@ -154,17 +159,20 @@ export class NovoAlunoComponent implements OnInit {
     });
   }
 
+  /** Volta à listagem; o guard verifica alterações ainda não salvas. */
   cancelar(): void {
     void this.router.navigate(['/alunos']);
   }
 
   /** O guard pergunta antes de perder informações preenchidas. */
+  /** Consulta o estado do formulário antes de autorizar a saída da página. */
   podeSair(): boolean {
     return this.salvo
       || !this.formulario.dirty
       || confirm('Você tem alterações não salvas. Deseja sair mesmo?');
   }
 
+  // Protege também contra fechamento ou atualização da aba do navegador.
   @HostListener('window:beforeunload', ['$event'])
   confirmarFechamento(evento: BeforeUnloadEvent): void {
     if (this.formulario.dirty && !this.salvo) {
