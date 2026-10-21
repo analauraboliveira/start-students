@@ -1,9 +1,24 @@
 package br.com.startstudents.config;
-import br.com.startstudents.auth.JwtFiltro;import jakarta.servlet.http.HttpServletResponse;import org.springframework.context.annotation.*;import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;import org.springframework.security.config.annotation.web.builders.HttpSecurity;import org.springframework.security.config.http.SessionCreationPolicy;import org.springframework.security.web.*;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;import org.springframework.web.cors.*;import java.io.IOException;import java.util.List;
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import br.com.startstudents.auth.JwtFiltro;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 // configura JWT, CORS e quais rotas precisam de login
-// configura as rotas publicas, JWT e permissoes
+// configura as rotas públicas, JWT e permissões
 @Configuration @EnableMethodSecurity
 public class SecurityConfig {
  @Bean SecurityFilterChain filter(HttpSecurity h,JwtFiltro jwt)throws Exception{
