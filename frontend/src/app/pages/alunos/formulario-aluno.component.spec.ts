@@ -3,6 +3,7 @@ import {provideRouter,Router} from '@angular/router';
 import {RouterTestingHarness} from '@angular/router/testing';
 import {of} from 'rxjs';
 import {FormularioAlunoComponent} from './formulario-aluno.component';
+import {NovoAlunoComponent} from './novo-aluno.component';
 import {ListaAlunosComponent} from './lista-alunos.component';
 import {AlunoService} from '../../core/services/aluno.service';
 import {AuthService} from '../../core/auth/auth.service';
@@ -67,5 +68,7 @@ describe('Formulário de aluno e saída com alterações',()=>{
  
  it('protege as rotas reais de cadastro e edição',()=>{
   for(const path of ['alunos/novo','alunos/:id/editar'])expect(routes.find(route=>route.path===path)?.canDeactivate).toContain(alteracoesPendentesGuard);
+  expect(routes.find(route=>route.path==='alunos/novo')?.component).toBe(NovoAlunoComponent);
+  expect(routes.find(route=>route.path==='alunos/:id/editar')?.component).toBe(FormularioAlunoComponent);
  });
 });
