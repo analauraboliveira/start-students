@@ -1,0 +1,43 @@
+<main class="login">
+  <section class="card">
+    <h1>Start Students</h1>
+    <p class="subtitulo">Faça seu login para continuar</p>
+
+    <!-- O formulário de login continua independente do cadastro de alunos. -->
+    <form #formularioLogin="ngForm" (ngSubmit)="entrar()">
+      <label for="usuario-login">Usuário</label>
+      <div class="campo-icone">
+        <span aria-hidden="true">♙</span>
+        <input
+          id="usuario-login"
+          name="usuario"
+          placeholder="usuario123"
+          [(ngModel)]="usuario"
+          pattern="[A-Za-z0-9]{8,}"
+          autocomplete="username"
+          required
+        />
+      </div>
+
+      <label for="senha-login">Senha</label>
+      <div class="campo-icone">
+        <span aria-hidden="true">▣</span>
+        <input
+          id="senha-login"
+          name="senha"
+          placeholder="••••••••"
+          [(ngModel)]="senha"
+          type="password"
+          pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,20}"
+          autocomplete="current-password"
+          required
+        />
+      </div>
+
+      <p class="erro" *ngIf="erro" aria-live="polite">{{ erro }}</p>
+      <button [disabled]="formularioLogin.invalid || carregando">
+        {{ carregando ? 'Acessando...' : 'Acessar' }}
+      </button>
+    </form>
+  </section>
+</main>

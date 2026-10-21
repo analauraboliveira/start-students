@@ -1,5 +1,56 @@
-import {Component} from '@angular/core';import {CommonModule} from '@angular/common';import {FormsModule} from '@angular/forms';import {Router} from '@angular/router';import {AuthService} from '../../core/auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
-// tela de login do sistema
-@Component({selector:'app-login',standalone:true,imports:[CommonModule,FormsModule],template:`<main class="login"><section class="card"><h1>Start Students</h1><p class="subtitulo">Faça seu login para continuar</p><form #f="ngForm" (ngSubmit)="entrar()"><label>Usuário</label><div class="campo-icone"><span>♙</span><input aria-label="Usuário" name="usuario" placeholder="usuario123" [(ngModel)]="usuario" pattern="[A-Za-z0-9]{8,}" required></div><label>Senha</label><div class="campo-icone"><span>▣</span><input aria-label="Senha" name="senha" placeholder="••••••••" [(ngModel)]="senha" type="password" pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,20}" required></div><p class="erro" *ngIf="erro" aria-live="polite">{{erro}}</p><button [disabled]="f.invalid||carregando">{{carregando?'Acessando...':'Acessar'}}</button></form></section></main>`})
-export class LoginComponent{usuario='';senha='';erro='';carregando=false;constructor(private auth:AuthService,private router:Router){}ngOnInit(){const aviso=sessionStorage.getItem('avisoSessao');if(aviso){this.erro=aviso;sessionStorage.removeItem('avisoSessao')}}entrar(){this.erro='';this.carregando=true;this.auth.login(this.usuario,this.senha).subscribe({next:()=>this.router.navigate(['/alunos']),error:e=>{this.erro=e.error?.mensagem||'Usuário ou senha inválidos.';this.carregando=false}})}}
+import { AuthService } from '../../core/auth/auth.service';
+
+/**
+ * Tela de autenticação.
+ * O HTML fica separado para facilitar leitura e manutenção.
+ */
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './login.component.html',
+})
+export class LoginComponent implements OnInit {
+  usuario = '';
+  senha = '';
+  erro = '';
+  carregando = false;
+
+  constructor(
+    private readonly auth: AuthService,
+    private readonly router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    // Mostra avisos sobre sessão expirada, quando existirem.
+    const avisoSessao = sessionStorage.getItem('avisoSessao');
+
+    if (avisoSessao) {
+      this.erro = avisoSessao;
+      sessionStorage.removeItem('avisoSessao');
+    }
+  }
+
+  /** Envia as credenciais ao serviço de autenticação. */
+  entrar(): void {
+    if (this.carregando) return;
+
+    this.erro = '';
+    this.carregando = true;
+
+    this.auth.login(this.usuario, this.senha).subscribe({
+      next: () => {
+        void this.router.navigate(['/alunos']);
+      },
+      error: (respostaErro) => {
+        this.erro = respostaErro.error?.mensagem ?? 'Usuário ou senha inválidos.';
+        this.carregando = false;
+      },
+    });
+  }
+}
