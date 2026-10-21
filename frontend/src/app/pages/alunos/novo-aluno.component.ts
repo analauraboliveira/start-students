@@ -11,6 +11,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { AlunoService } from '../../core/services/aluno.service';
 import { cpfReactiveValidator } from '../../core/validators/cpf-reactive.validator';
 import { Aluno } from '../../models/aluno.model';
+import { FotoAlunoComponent } from './foto-aluno.component';
 
 /**
  * Fluxo de cadastro: preencher -> validar -> enviar para a API -> voltar à lista.
@@ -19,7 +20,7 @@ import { Aluno } from '../../models/aluno.model';
 @Component({
   selector: 'app-novo-aluno',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FotoAlunoComponent],
   templateUrl: './novo-aluno.component.html',
 })
 export class NovoAlunoComponent implements OnInit {
