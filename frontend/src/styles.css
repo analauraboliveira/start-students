@@ -540,34 +540,10 @@ tr:last-child td {
   }
 }
 
-.icone-svg {
-  width: 14px;
-  height: 14px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.8;
-}
-
-.acao.ver {
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  background: #687383;
-}
-
 .acao.editar,.acao.excluir {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-}
-
-.modal {
-  width: 440px;
-  padding: 25px 28px;
-}
-
-.modal h2 {
-  font-size: 19px;
 }
 
 .modal p {
@@ -577,35 +553,14 @@ tr:last-child td {
 .modal-acoes button {
   min-width: 92px;
 }
-
-/* acabamento visual */
-
-.acao {
-  background: transparent!important;
-  border: 0!important;
-  border-radius: 0!important;
-  width: 24px!important;
-  height: 24px!important;
-  padding: 3px!important;
-}
-
-.acao.ver {
-  color: #59616d;
-}
-
-.acao.editar {
-  color: #1677ff;
-}
-
-.acao.excluir {
-  color: #e50019;
-}
-
 .icone-svg {
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
   fill: none;
   stroke: currentColor;
+  stroke-width: 1.8;
+  width: 17px;
+  height: 17px;
   stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -649,39 +604,46 @@ tr:last-child td {
 .form-card,.detalhe-card {
   padding: 18px 20px 20px;
 }
-
 .modal {
+  width: 440px;
+  padding: 25px 28px;
   width: 430px;
   border-radius: 6px;
 }
-
 .modal h2 {
+  font-size: 19px;
   font-size: 18px;
   font-weight: 600;
 }
-
-/* ações da tabela */
-
 .acao {
-  width: 28px!important;
+  background: transparent!important;
+  border: 0!important;
+  border-radius: 0!important;
+  width: 24px!important;
   height: 24px!important;
+  padding: 3px!important;
+  width: 28px!important;
   border-radius: 4px!important;
   padding: 4px!important;
   display: grid!important;
   place-items: center!important;
 }
-
 .acao.ver {
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  background: #687383;
+  color: #59616d;
   background: #6b7280!important;
   color: #fff!important;
 }
-
 .acao.editar {
+  color: #1677ff;
   background: #1677ff!important;
   color: #fff!important;
 }
-
 .acao.excluir {
+  color: #e50019;
   background: #ed0016!important;
   color: #fff!important;
 }
