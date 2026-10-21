@@ -1,47 +1,152 @@
 package br.com.startstudents.application.service;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import br.com.startstudents.application.ports.out.AlunoRepositoryPort;
 import br.com.startstudents.domain.exception.ConflitoException;
 import br.com.startstudents.domain.model.Aluno;
 import br.com.startstudents.domain.model.StatusAluno;
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+/** Testa as regras de cadastro e edição sem precisar iniciar o banco. */
+@ExtendWith(MockitoExtension.class)
 class GerenciarAlunoServiceTest {
- @Mock AlunoRepositoryPort repository;@Mock GeradorMatricula gerador;@Mock ValidadorCpf cpf;@Mock ValidadorFoto foto;
- @InjectMocks GerenciarAlunoService service;
- private Aluno valido(){return Aluno.builder().nomeCompleto("Ana Silva").cpf("52998224725").telefone("(81) 99999-9999").email("ana@email.com").build();}
- 
- // testes
- // 1. não deve cadastrar cpf duplicado, 2. não deve cadastrar email duplicado
- // 3. cadastro normalizado e gera matrícula, 4. não deve aceitar telefone inválido
- // 5. editar mantém cpf e matrícula, 6. deve detectar conflito de versão
- // 7. excluir lógico
- 
- @Test void naoDeveCadastrarCpfDuplicado()
 
- {Aluno a=valido();when(cpf.valido(any())).thenReturn(true);when(repository.existeCpf("52998224725",null)).thenReturn(true);assertThrows(ConflitoException.class,()->service.cadastrar(a));verify(repository,never()).salvar(any());}
+    @Mock
+    private AlunoRepositoryPort repositorioAlunos;
 
- @Test void naoDeveCadastrarEmailDuplicado(){Aluno a=valido();when(cpf.valido(any())).thenReturn(true); when(repository.existeEmail("ana@email.com",null)).thenReturn(true);assertThrows(ConflitoException.class,()->service.cadastrar(a));verify(repository,never()).salvar(any());}
+    @Mock
+    private GeradorMatricula geradorMatricula;
 
- @Test void cadastroNormalizaDadosEGeraMatricula(){Aluno a=valido();when(cpf.valido("52998224725")).thenReturn(true);when(gerador.gerar()).thenReturn("20260001");when(repository.salvar(any())).thenAnswer(i->i.getArgument(0));Aluno salvo=service.cadastrar(a);assertEquals("52998224725",salvo.getCpf());assertEquals("81999999999",salvo.getTelefone());assertEquals("20260001",salvo.getMatricula());assertEquals(StatusAluno.ATIVO,salvo.getStatus());assertFalse(salvo.isUsuarioExcluido());}
+    @Mock
+    private ValidadorCpf validadorCpf;
 
- @Test void naoDeveAceitarTelefoneInvalido(){Aluno a=valido();a.setTelefone("81999");when(cpf.valido(any())).thenReturn(true);assertThrows(IllegalArgumentException.class,()->service.cadastrar(a));verify(repository,never()).salvar(any());}
+    @Mock
+    private ValidadorFoto validadorFoto;
 
- @Test void editarMantemCpfEMatricula(){Aluno atual=Aluno.builder().id(1L).nomeCompleto("Ana Silva").cpf("52998224725").telefone("81999999999").email("ana@email.com").matricula("20260001").status(StatusAluno.ATIVO).version(2L).build();Aluno mudanca=Aluno.builder().nomeCompleto("Ana Souza").cpf("11111111111").telefone("(81) 98888-7777").email("nova@email.com").matricula("OUTRA").status(StatusAluno.ATIVO).version(2L).build();when(repository.buscarPorId(1L)).thenReturn(Optional.of(atual));when(repository.salvar(any())).thenAnswer(i->i.getArgument(0));Aluno salvo=service.editar(1L,mudanca);assertEquals("52998224725",salvo.getCpf());assertEquals("20260001",salvo.getMatricula());assertEquals("Ana Souza",salvo.getNomeCompleto());}
+    @InjectMocks
+    private GerenciarAlunoService gerenciarAlunoService;
 
- @Test void deveDetectarConflitoDeVersao(){Aluno atual=Aluno.builder().id(1L).cpf("52998224725").telefone("81999999999").email("ana@email.com").matricula("20260001").status(StatusAluno.ATIVO).version(3L).build();Aluno mudanca=Aluno.builder().version(2L).build();when(repository.buscarPorId(1L)).thenReturn(Optional.of(atual));assertThrows(ConflitoException.class,()->service.editar(1L,mudanca));verify(repository,never()).salvar(any());}
+    private Aluno criarAlunoValido() {
+        return Aluno.builder()
+                .nomeCompleto("Ana Silva")
+                .cpf("52998224725")
+                .telefone("(81) 99999-9999")
+                .email("ana@email.com")
+                .build();
+    }
 
- @Test void excluirEhLogico(){Aluno atual=Aluno.builder().id(1L).status(StatusAluno.ATIVO).build();when(repository.buscarPorId(1L)).thenReturn(Optional.of(atual));service.inativar(1L);verify(repository).inativar(1L);verify(repository,never()).salvar(any());}
+    @Test
+    void naoDeveCadastrarCpfDuplicado() {
+        Aluno novoAluno = criarAlunoValido();
+        when(validadorCpf.valido(any())).thenReturn(true);
+        when(repositorioAlunos.existeCpf("52998224725", null)).thenReturn(true);
+
+        assertThrows(ConflitoException.class, () -> gerenciarAlunoService.cadastrar(novoAluno));
+        verify(repositorioAlunos, never()).salvar(any());
+    }
+
+    @Test
+    void naoDeveCadastrarEmailDuplicado() {
+        Aluno novoAluno = criarAlunoValido();
+        when(validadorCpf.valido(any())).thenReturn(true);
+        when(repositorioAlunos.existeEmail("ana@email.com", null)).thenReturn(true);
+
+        assertThrows(ConflitoException.class, () -> gerenciarAlunoService.cadastrar(novoAluno));
+        verify(repositorioAlunos, never()).salvar(any());
+    }
+
+    @Test
+    void cadastroNormalizaDadosEGeraMatricula() {
+        Aluno novoAluno = criarAlunoValido();
+        when(validadorCpf.valido("52998224725")).thenReturn(true);
+        when(geradorMatricula.gerar()).thenReturn("20260001");
+        when(repositorioAlunos.salvar(any())).thenAnswer(invocacao -> invocacao.getArgument(0));
+
+        // Confere o resultado depois das validações e da geração de matrícula.
+        Aluno alunoSalvo = gerenciarAlunoService.cadastrar(novoAluno);
+
+        assertEquals("52998224725", alunoSalvo.getCpf());
+        assertEquals("81999999999", alunoSalvo.getTelefone());
+        assertEquals("20260001", alunoSalvo.getMatricula());
+        assertEquals(StatusAluno.ATIVO, alunoSalvo.getStatus());
+        assertFalse(alunoSalvo.isUsuarioExcluido());
+        assertNull(alunoSalvo.getVersion());
+    }
+
+    @Test
+    void naoDeveAceitarTelefoneInvalido() {
+        Aluno novoAluno = criarAlunoValido();
+        novoAluno.setTelefone("81999");
+        when(validadorCpf.valido(any())).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> gerenciarAlunoService.cadastrar(novoAluno));
+        verify(repositorioAlunos, never()).salvar(any());
+    }
+
+    @Test
+    void naoDeveAceitarCpfInvalido() {
+        Aluno novoAluno = criarAlunoValido();
+        when(validadorCpf.valido(any())).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> gerenciarAlunoService.cadastrar(novoAluno));
+        verify(repositorioAlunos, never()).salvar(any());
+    }
+
+    @Test
+    void editarMantemCpfEMatricula() {
+        Aluno alunoExistente = Aluno.builder()
+                .id(1L).nomeCompleto("Ana Silva").cpf("52998224725")
+                .telefone("81999999999").email("ana@email.com")
+                .matricula("20260001").status(StatusAluno.ATIVO).version(2L)
+                .build();
+        Aluno dadosAtualizados = Aluno.builder()
+                .nomeCompleto("Ana Souza").cpf("11111111111")
+                .telefone("(81) 98888-7777").email("nova@email.com")
+                .matricula("OUTRA").status(StatusAluno.ATIVO).version(2L)
+                .build();
+
+        when(repositorioAlunos.buscarPorId(1L)).thenReturn(Optional.of(alunoExistente));
+        when(repositorioAlunos.salvar(any())).thenAnswer(invocacao -> invocacao.getArgument(0));
+
+        Aluno alunoSalvo = gerenciarAlunoService.editar(1L, dadosAtualizados);
+
+        assertEquals("52998224725", alunoSalvo.getCpf());
+        assertEquals("20260001", alunoSalvo.getMatricula());
+        assertEquals("Ana Souza", alunoSalvo.getNomeCompleto());
+    }
+
+    @Test
+    void deveDetectarConflitoDeVersao() {
+        Aluno alunoExistente = Aluno.builder()
+                .id(1L).cpf("52998224725").telefone("81999999999")
+                .email("ana@email.com").matricula("20260001")
+                .status(StatusAluno.ATIVO).version(3L)
+                .build();
+        Aluno dadosAtualizados = Aluno.builder().version(2L).build();
+
+        when(repositorioAlunos.buscarPorId(1L)).thenReturn(Optional.of(alunoExistente));
+
+        assertThrows(ConflitoException.class,
+                () -> gerenciarAlunoService.editar(1L, dadosAtualizados));
+        verify(repositorioAlunos, never()).salvar(any());
+    }
+
+    @Test
+    void excluirEhLogico() {
+        Aluno alunoExistente = Aluno.builder().id(1L).status(StatusAluno.ATIVO).build();
+        when(repositorioAlunos.buscarPorId(1L)).thenReturn(Optional.of(alunoExistente));
+
+        gerenciarAlunoService.inativar(1L);
+
+        verify(repositorioAlunos).inativar(1L);
+        verify(repositorioAlunos, never()).salvar(any());
+    }
 }
