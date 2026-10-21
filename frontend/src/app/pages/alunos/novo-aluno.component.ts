@@ -76,22 +76,31 @@ export class NovoAlunoComponent implements OnInit {
     }
 
     const erros = this.formulario.controls[nomeCampo].errors;
-    if (erros?.['required']) return 'Este campo é obrigatório.';
-    if (erros?.['email']) return 'Informe um e-mail válido.';
-    if (erros?.['cpfInvalido']) return 'Informe um CPF válido.';
-    if (nomeCampo === 'telefone') return 'Informe DDD e telefone com 10 ou 11 dígitos.';
+    if (erros?.['required']) {
+      return 'Este campo é obrigatório.';
+    }
+    if (erros?.['email']) {
+      return 'Informe um e-mail válido.';
+    }
+    if (erros?.['cpfInvalido']) {
+      return 'Informe um CPF válido.';
+    }
+    if (nomeCampo === 'telefone') {
+      return 'Informe DDD e telefone com 10 ou 11 dígitos.';
+    }
     if (nomeCampo === 'nomeCompleto') {
       return 'Use de 3 a 120 caracteres, apenas letras e pontuação permitida.';
     }
     return '';
   }
 
-  /** Confere formato e tamanho antes de converter a imagem em texto base64. */
   /** Recebe a imagem do componente filho e valida tipo e tamanho do arquivo. */
   fotoSelecionada(evento: Event): void {
     const campoArquivo = evento.target as HTMLInputElement;
     const arquivo = campoArquivo.files?.[0];
-    if (!arquivo) return;
+    if (!arquivo) {
+      return;
+    }
 
     if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
       this.erro = 'A foto deve ser JPEG ou PNG.';
@@ -105,6 +114,7 @@ export class NovoAlunoComponent implements OnInit {
       return;
     }
 
+    // Converte a imagem para o formato esperado pela API.
     const leitorArquivo = new FileReader();
     leitorArquivo.onload = () => {
       this.formulario.controls.foto.setValue(String(leitorArquivo.result));
@@ -164,7 +174,6 @@ export class NovoAlunoComponent implements OnInit {
     void this.router.navigate(['/alunos']);
   }
 
-  /** O guard pergunta antes de perder informações preenchidas. */
   /** Consulta o estado do formulário antes de autorizar a saída da página. */
   podeSair(): boolean {
     return this.salvo
