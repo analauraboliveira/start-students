@@ -1,0 +1,117 @@
+<main class="form-page">
+  <section class="form-card">
+    <h1 class="form-titulo">
+      <a class="voltar" routerLink="/alunos" aria-label="Voltar para alunos">←</a>
+      &nbsp;&nbsp; Novo Aluno
+    </h1>
+
+    <div *ngIf="semPermissao" class="estado erro">
+      Você não tem permissão para cadastrar alunos.
+    </div>
+
+    <form
+      *ngIf="!semPermissao"
+      [formGroup]="formulario"
+      (ngSubmit)="salvar()"
+      novalidate
+    >
+      <!-- A foto é opcional e pode ser removida antes do cadastro. -->
+      <div class="foto-centro">
+        <img
+          *ngIf="formulario.controls.foto.value"
+          [src]="formulario.controls.foto.value"
+          alt="Pré-visualização da foto do aluno"
+          class="preview"
+        />
+        <div *ngIf="!formulario.controls.foto.value" class="sem-foto">
+          Sem foto
+        </div>
+
+        <label class="upload">
+          <span>Adicionar foto</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png"
+            aria-label="Adicionar foto"
+            (change)="fotoSelecionada($event)"
+          />
+        </label>
+
+        <button
+          *ngIf="formulario.controls.foto.value"
+          type="button"
+          class="secundario"
+          (click)="removerFoto()"
+        >
+          Remover foto
+        </button>
+      </div>
+
+      <!-- Cada campo tem seu próprio controle e suas mensagens de erro. -->
+      <label for="novo-nome">Nome Completo</label>
+      <input
+        id="novo-nome"
+        name="nome"
+        formControlName="nomeCompleto"
+        maxlength="120"
+        autocomplete="name"
+        [attr.aria-invalid]="campoInvalido('nomeCompleto')"
+      />
+      <small class="erro-campo" *ngIf="campoInvalido('nomeCompleto') || errosCampos['nomeCompleto']">
+        {{ mensagemCampo('nomeCompleto') }}
+      </small>
+
+      <label for="novo-cpf">CPF</label>
+      <input
+        id="novo-cpf"
+        name="cpf"
+        formControlName="cpf"
+        inputmode="numeric"
+        [attr.aria-invalid]="campoInvalido('cpf')"
+      />
+      <small class="erro-campo" *ngIf="campoInvalido('cpf') || errosCampos['cpf']">
+        {{ mensagemCampo('cpf') }}
+      </small>
+
+      <label for="novo-email">Email</label>
+      <input
+        id="novo-email"
+        name="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        [attr.aria-invalid]="campoInvalido('email')"
+      />
+      <small class="erro-campo" *ngIf="campoInvalido('email') || errosCampos['email']">
+        {{ mensagemCampo('email') }}
+      </small>
+
+      <label for="novo-telefone">Telefone</label>
+      <input
+        id="novo-telefone"
+        name="telefone"
+        type="tel"
+        formControlName="telefone"
+        autocomplete="tel"
+        [attr.aria-invalid]="campoInvalido('telefone')"
+      />
+      <small class="erro-campo" *ngIf="campoInvalido('telefone') || errosCampos['telefone']">
+        {{ mensagemCampo('telefone') }}
+      </small>
+
+      <!-- Matrícula e status não são editáveis no cadastro. -->
+      <p class="linha-status"><span><i class="dot"></i>Ativo</span></p>
+      <p class="erro" *ngIf="erro" aria-live="polite">{{ erro }}</p>
+      <p class="sucesso" *ngIf="sucesso" aria-live="polite">{{ sucesso }}</p>
+
+      <div class="acoes-form">
+        <button type="button" class="secundario" (click)="cancelar()">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="formulario.invalid || salvando">
+          {{ salvando ? 'Salvando...' : 'Incluir Novo Aluno' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</main>
