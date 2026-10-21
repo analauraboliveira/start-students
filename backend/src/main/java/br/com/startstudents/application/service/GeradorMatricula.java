@@ -1,21 +1,27 @@
 package br.com.startstudents.application.service;
 
 import br.com.startstudents.application.ports.out.AlunoRepositoryPort;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import java.time.Year;
 import java.util.concurrent.ThreadLocalRandom;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@Component @RequiredArgsConstructor
-
+/** Gera uma matrícula com o ano atual e quatro dígitos numéricos. */
+@Component
+@RequiredArgsConstructor
 public class GeradorMatricula {
- private final AlunoRepositoryPort repository;
- public String gerar(){
-  String matricula;
-  // junta o ano atual com 4 numeros aleatorios
-  do { matricula=Year.now().getValue()+String.format("%04d",ThreadLocalRandom.current().nextInt(1,10000)); }
-  // se ja existir, gera outra
-  while(repository.existeMatricula(matricula));
-  return matricula;
- }
+
+    private final AlunoRepositoryPort repositorioAlunos;
+
+    public String gerar() {
+        String matriculaGerada;
+
+        // Tenta novamente caso o número já exista no banco.
+        do {
+            int numeroAleatorio = ThreadLocalRandom.current().nextInt(1, 10000);
+            matriculaGerada = Year.now().getValue() + String.format("%04d", numeroAleatorio);
+        } while (repositorioAlunos.existeMatricula(matriculaGerada));
+
+        return matriculaGerada;
+    }
 }
