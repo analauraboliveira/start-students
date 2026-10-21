@@ -1,6 +1,188 @@
-import {CpfValidatorDirective,cpfValido} from '../../core/validators/cpf.validator';
-import {Component,HostListener,OnInit} from '@angular/core';import {CommonModule} from '@angular/common';import {FormsModule} from '@angular/forms';import {ActivatedRoute,Router} from '@angular/router';import {AlunoService} from '../../core/services/aluno.service';import {AuthService} from '../../core/auth/auth.service';import {Aluno} from '../../models/aluno.model';
+import { CommonModule } from '@angular/common';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-// o mesmo formulário serve para cadastro e edição
-@Component({selector:'app-formulario-aluno',standalone:true,imports:[CommonModule,FormsModule,CpfValidatorDirective],templateUrl: './formulario-aluno.component.html'})
-export class FormularioAlunoComponent implements OnInit{id?:number;aluno:Partial<Aluno>={status:'ATIVO'};original='';erro='';errosCampos:Record<string,string>={};sucesso='';salvando=false;semPermissao=false;salvo=false;constructor(private service:AlunoService,private auth:AuthService,private route:ActivatedRoute,private router:Router){}ngOnInit(){if(!this.auth.administrador()){this.semPermissao=true;return}const x=this.route.snapshot.paramMap.get('id');if(x){this.id=+x;this.service.buscar(this.id).subscribe({next:a=>{this.aluno=a;this.original=this.snapshot()},error:()=>this.erro='Não foi possível carregar o aluno.'})}else this.original=this.snapshot()}alterado(){return this.snapshot()!==this.original}private snapshot(){return JSON.stringify({nomeCompleto:this.aluno.nomeCompleto||'',email:this.aluno.email||'',cpf:this.aluno.cpf||'',telefone:this.aluno.telefone||'',foto:this.aluno.foto||'',status:this.aluno.status||'ATIVO'})}cpfValido(){const d=String(this.aluno.cpf||'').replace(/\D/g,'');if(d.length!==11||/^([0-9])\1+$/.test(d))return false;let s=0;for(let i=0;i<9;i++)s+=+d[i]*(10-i);let r=(s*10)%11;if(r===10)r=0;if(r!==+d[9])return false;s=0;for(let i=0;i<10;i++)s+=+d[i]*(11-i);r=(s*10)%11;if(r===10)r=0;return r===+d[10]}fotoSelecionada(event:Event){const input=event.target as HTMLInputElement,file=input.files?.[0];if(!file)return;if(!['image/jpeg','image/png'].includes(file.type)){this.erro='A foto deve ser JPEG ou PNG.';input.value='';return}if(file.size>5*1024*1024){this.erro='A foto deve ter no máximo 5 MB.';input.value='';return}const leitor=new FileReader();leitor.onload=()=>{this.aluno.foto=String(leitor.result);this.erro=''};leitor.readAsDataURL(file)}removerFoto(){this.aluno.foto=''}salvar(){if(!this.id&&!cpfValido(this.aluno.cpf)){this.errosCampos={cpf:'Informe um CPF válido.'};return}this.salvando=true;this.erro='';this.errosCampos={};this.sucesso='';const req=this.id?this.service.editar(this.id,this.aluno):this.service.cadastrar(this.aluno);req.subscribe({next:a=>{this.salvo=true;this.sucesso=this.id?'Alterações salvas.':'Aluno cadastrado. Matrícula: '+a.matricula;setTimeout(()=>this.router.navigate(['/alunos']),700)},error:e=>{this.errosCampos=e.error?.campos||{};this.erro=e.error?.mensagem||'Confira os dados e tente novamente.';this.salvando=false}})}cancelar(){this.router.navigate(['/alunos'])}voltar(e:Event){e.preventDefault();this.cancelar()}podeSair(){return !this.alterado()||this.salvo||confirm('Você tem alterações não salvas. Deseja sair mesmo?')}@HostListener('window:beforeunload',['$event'])sairPagina(e:BeforeUnloadEvent){if(this.alterado()&&!this.salvo)e.preventDefault()}}
+import { AuthService } from '../../core/auth/auth.service';
+import { AlunoService } from '../../core/services/aluno.service';
+import { Aluno, StatusAluno } from '../../models/aluno.model';
+
+/**
+ * Esta tela é só de edição. O cadastro fica no NovoAlunoComponent.
+ * Fluxo: ID da rota -> busca aluno -> preenche formulário -> salva alterações.
+ */
+@Component({
+  selector: 'app-formulario-aluno',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  templateUrl: './formulario-aluno.component.html',
+})
+export class FormularioAlunoComponent implements OnInit {
+  readonly formulario = this.formBuilder.nonNullable.group({
+    nomeCompleto: ['', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(120),
+      Validators.pattern(/^[\p{L} .'-]+$/u),
+    ]],
+    email: ['', [Validators.required, Validators.email]],
+    telefone: ['', [
+      Validators.required,
+      Validators.pattern(/^\D*(?:\d\D*){10,11}$/),
+    ]],
+    foto: [''],
+    status: this.formBuilder.nonNullable.control<StatusAluno>('ATIVO', Validators.required),
+  });
+
+  aluno?: Aluno;
+  carregando = true;
+  salvando = false;
+  salvo = false;
+  semPermissao = false;
+  tentouSalvar = false;
+  erro = '';
+  sucesso = '';
+  errosCampos: Record<string, string> = {};
+
+  constructor(
+    private readonly formBuilder: FormBuilder,
+    private readonly alunoService: AlunoService,
+    private readonly authService: AuthService,
+    private readonly rotaAtiva: ActivatedRoute,
+    private readonly router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    if (!this.authService.administrador()) {
+      this.semPermissao = true;
+      this.carregando = false;
+      return;
+    }
+
+    const identificadorAluno = Number(this.rotaAtiva.snapshot.paramMap.get('id'));
+    if (!Number.isInteger(identificadorAluno) || identificadorAluno <= 0) {
+      this.erro = 'Identificador do aluno inválido.';
+      this.carregando = false;
+      return;
+    }
+
+    // Primeiro busca os dados; só depois libera o formulário.
+    this.alunoService.buscar(identificadorAluno).subscribe({
+      next: (alunoEncontrado) => {
+        this.aluno = alunoEncontrado;
+        this.formulario.reset({
+          nomeCompleto: alunoEncontrado.nomeCompleto,
+          email: alunoEncontrado.email,
+          telefone: alunoEncontrado.telefone,
+          foto: alunoEncontrado.foto ?? '',
+          status: alunoEncontrado.status,
+        });
+        this.carregando = false;
+      },
+      error: () => {
+        this.erro = 'Não foi possível carregar o aluno.';
+        this.carregando = false;
+      },
+    });
+  }
+
+  campoInvalido(nomeCampo: keyof typeof this.formulario.controls): boolean {
+    const controle = this.formulario.controls[nomeCampo];
+    return controle.invalid && (controle.touched || this.tentouSalvar);
+  }
+
+  mensagemCampo(nomeCampo: keyof typeof this.formulario.controls): string {
+    if (this.errosCampos[nomeCampo]) return this.errosCampos[nomeCampo];
+
+    const erros = this.formulario.controls[nomeCampo].errors;
+    if (erros?.['required']) return 'Este campo é obrigatório.';
+    if (erros?.['email']) return 'Informe um e-mail válido.';
+    if (nomeCampo === 'telefone') return 'Informe DDD e telefone com 10 ou 11 dígitos.';
+    if (nomeCampo === 'nomeCompleto') {
+      return 'Use de 3 a 120 caracteres, apenas letras e pontuação permitida.';
+    }
+    return '';
+  }
+
+  fotoSelecionada(evento: Event): void {
+    const campoArquivo = evento.target as HTMLInputElement;
+    const arquivo = campoArquivo.files?.[0];
+    if (!arquivo) return;
+
+    if (!['image/jpeg', 'image/png'].includes(arquivo.type)) {
+      this.erro = 'A foto deve ser JPEG ou PNG.';
+      campoArquivo.value = '';
+      return;
+    }
+    if (arquivo.size > 5 * 1024 * 1024) {
+      this.erro = 'A foto deve ter no máximo 5 MB.';
+      campoArquivo.value = '';
+      return;
+    }
+
+    const leitorArquivo = new FileReader();
+    leitorArquivo.onload = () => {
+      this.formulario.controls.foto.setValue(String(leitorArquivo.result));
+      this.formulario.controls.foto.markAsDirty();
+      this.erro = '';
+    };
+    leitorArquivo.onerror = () => {
+      this.erro = 'Não foi possível ler a foto.';
+    };
+    leitorArquivo.readAsDataURL(arquivo);
+  }
+
+  removerFoto(): void {
+    this.formulario.controls.foto.setValue('');
+    this.formulario.controls.foto.markAsDirty();
+  }
+
+  /** Só salva se houver alterações válidas e nenhum envio em andamento. */
+  salvar(): void {
+    this.tentouSalvar = true;
+    this.formulario.markAllAsTouched();
+
+    if (!this.aluno || this.salvando || this.formulario.invalid || !this.formulario.dirty) {
+      return;
+    }
+
+    this.salvando = true;
+    this.erro = '';
+    this.sucesso = '';
+    this.errosCampos = {};
+
+    this.alunoService.editar(this.aluno.id, {
+      ...this.formulario.getRawValue(),
+      cpf: this.aluno.cpf,
+      version: this.aluno.version,
+    }).subscribe({
+      next: () => {
+        this.salvo = true;
+        this.salvando = false;
+        this.sucesso = 'Alterações salvas.';
+        void this.router.navigate(['/alunos']);
+      },
+      error: (respostaErro) => {
+        this.errosCampos = respostaErro.error?.campos ?? {};
+        this.erro = respostaErro.error?.mensagem
+          ?? 'Confira os dados e tente novamente.';
+        this.salvando = false;
+      },
+    });
+  }
+
+  cancelar(): void {
+    void this.router.navigate(['/alunos']);
+  }
+
+  podeSair(): boolean {
+    return this.salvo
+      || !this.formulario.dirty
+      || confirm('Você tem alterações não salvas. Deseja sair mesmo?');
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  confirmarFechamento(evento: BeforeUnloadEvent): void {
+    if (this.formulario.dirty && !this.salvo) evento.preventDefault();
+  }
+}
