@@ -1,0 +1,23 @@
+<div class="foto-centro">
+  <img *ngIf="foto" [src]="foto" alt="Pré-visualização da foto do aluno" class="preview" />
+  <div *ngIf="!foto" class="sem-foto">Sem foto</div>
+
+  <label class="upload">
+    <span>Adicionar foto</span>
+    <input
+      type="file"
+      accept="image/jpeg,image/png"
+      aria-label="Adicionar foto"
+      (change)="selecionar.emit($event)"
+    />
+  </label>
+
+  <button
+    *ngIf="foto"
+    type="button"
+    class="secundario"
+    (click)="remover.emit()"
+  >
+    Remover foto
+  </button>
+</div>
