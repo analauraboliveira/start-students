@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';import {HttpClient} from '@angular/common/http';import {tap} from 'rxjs';
 
-// cuida do login e guarda a sessao no navegador
+// cuida do login e guarda a sessão no navegador
 interface Sessao{token:string;usuario:string;perfil:'ADMINISTRADOR'|'LEITOR'}
+
 @Injectable({providedIn:'root'})
 export class AuthService{
  private api='http://localhost:8080/api/auth';

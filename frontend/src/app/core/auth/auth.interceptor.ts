@@ -1,5 +1,6 @@
 import {HttpInterceptorFn} from '@angular/common/http';import {inject} from '@angular/core';import {AuthService} from './auth.service';import {Router} from '@angular/router';import {catchError,throwError} from 'rxjs';
-// coloca o token nas requisicoes e trata sessao expirada
+
+// coloca o token nas requisições e trata sessão expirada
 export const authInterceptor:HttpInterceptorFn=(req,next)=>{
  const auth=inject(AuthService),router=inject(Router),token=auth.sessao()?.token;
  const nova=token?req.clone({setHeaders:{Authorization:'Bearer '+token}}):req;
