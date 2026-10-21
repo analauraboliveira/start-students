@@ -1,10 +1,15 @@
-<!-- Informações reutilizáveis na visualização de detalhes. -->
+<!-- Componente de leitura: apresenta os dados sem permitir alterações. -->
 <div class="foto-centro">
-  <img *ngIf="aluno.foto" [src]="aluno.foto"
-    [alt]="'Foto de ' + aluno.nomeCompleto" class="preview" />
+  <img
+    *ngIf="aluno.foto"
+    [src]="aluno.foto"
+    [alt]="'Foto de ' + aluno.nomeCompleto"
+    class="preview"
+  />
   <div *ngIf="!aluno.foto" class="sem-foto">Sem foto</div>
 </div>
 
+<!-- Os rótulos ficam separados dos valores para facilitar a leitura. -->
 <div class="rotulo">Nome Completo</div>
 <div class="valor">{{ aluno.nomeCompleto }}</div>
 
@@ -20,7 +25,11 @@
 <div class="rotulo">Matrícula</div>
 <div class="valor">{{ aluno.matricula }}</div>
 
+<!-- O status chega da API como ATIVO ou INATIVO. -->
 <div class="rotulo">Status</div>
 <p class="linha-status">
-  <span><i class="dot"></i>{{ aluno.status === 'ATIVO' ? 'Ativo' : 'Inativo' }}</span>
+  <span>
+    <i class="dot" aria-hidden="true"></i>
+    {{ aluno.status === 'ATIVO' ? 'Ativo' : 'Inativo' }}
+  </span>
 </p>
