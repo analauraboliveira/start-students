@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { AlunoService } from '../../core/services/aluno.service';
 import { Aluno, StatusAluno } from '../../models/aluno.model';
+import { FotoAlunoComponent } from './foto-aluno.component';
 
 /**
  * Esta tela é só de edição. O cadastro fica no NovoAlunoComponent.
@@ -14,7 +15,7 @@ import { Aluno, StatusAluno } from '../../models/aluno.model';
 @Component({
   selector: 'app-formulario-aluno',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, FotoAlunoComponent],
   templateUrl: './formulario-aluno.component.html',
 })
 export class FormularioAlunoComponent implements OnInit {
